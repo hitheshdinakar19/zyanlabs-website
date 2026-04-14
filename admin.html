@@ -277,6 +277,43 @@
         }
 
         .reply-bar button:not(:disabled):hover { opacity: 0.85; }
+
+        /* ── Header auth controls ────────────────────── */
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .btn-header {
+            padding: 7px 14px;
+            border-radius: 7px;
+            border: 1px solid rgba(255,255,255,0.12);
+            background: rgba(255,255,255,0.05);
+            color: rgba(255,255,255,0.65);
+            font-size: 12px;
+            font-weight: 600;
+            font-family: 'Poppins', sans-serif;
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s, border-color 0.2s;
+        }
+
+        .btn-header:hover {
+            background: rgba(255,255,255,0.1);
+            color: white;
+        }
+
+        .btn-logout {
+            border-color: rgba(239,68,68,0.3);
+            color: rgba(239,68,68,0.7);
+        }
+
+        .btn-logout:hover {
+            background: rgba(239,68,68,0.1);
+            color: #fca5a5;
+            border-color: rgba(239,68,68,0.5);
+        }
+
     </style>
 </head>
 
@@ -285,12 +322,14 @@
     <!-- HEADER -->
     <header>
         <span class="logo">ZyanLabs</span>
-        <div class="conn-status">
-            <span class="conn-dot" id="connDot"></span>
-            <span id="connLabel">Connecting…</span>
+        <div class="header-right">
+            <div class="conn-status">
+                <span class="conn-dot" id="connDot"></span>
+                <span id="connLabel">Connecting…</span>
+            </div>
+            <button class="btn-header btn-logout" onclick="logout()">Log Out</button>
         </div>
     </header>
-
 
     <!-- LAYOUT -->
     <div class="layout">
@@ -336,7 +375,18 @@
     <script src="https://cdn.socket.io/4.8.0/socket.io.min.js"></script>
     <script>
         const API_BASE = "http://localhost:5000";
-        const socket   = io(API_BASE);
+
+        /* ── Session guard — secondary check in addition to server-side redirect ── */
+        (async function () {
+            try {
+                const res = await fetch('/api/check-auth', { credentials: 'include' });
+                if (!res.ok) window.location.replace('/login.html');
+            } catch (_) {
+                window.location.replace('/login.html');
+            }
+        })();
+
+        const socket = io(API_BASE);
 
         /* ── State ────────────────────────────────────────── */
 
@@ -543,6 +593,12 @@
                 .replace(/&/g, "&amp;")
                 .replace(/</g, "&lt;")
                 .replace(/>/g, "&gt;");
+        }
+
+        /* ── Logout ───────────────────────────────────────── */
+        async function logout() {
+            await fetch('/api/logout', { method: 'POST', credentials: 'include' });
+            window.location.replace('/login.html');
         }
     </script>
 

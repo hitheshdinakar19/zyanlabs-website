@@ -3,562 +3,158 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>ZyanLabs | Our Growth Systems</title>
+    <title>Services — ZyanLabs</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <meta name="description"
-        content="ZyanLabs growth systems: Zyan Core for high-performance websites, Zyan Flow for automated lead generation, and Zyan Scale for conversion optimization.">
+    <meta name="description" content="ZyanLabs builds business websites, e-commerce stores, and custom SaaS platforms that drive real growth.">
 
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <link rel="stylesheet" href="style.css">
-
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap"
-        rel="stylesheet">
+          rel="stylesheet">
 </head>
 
 <body>
 
-    <!-- PARTICLES BACKGROUND -->
     <div id="tsparticles"></div>
-
 
     <!-- HEADER -->
     <header>
-
         <a href="index.html" class="logo">ZyanLabs</a>
-
         <nav>
-            <a href="#core">Zyan Core</a>
-            <a href="#flow">Zyan Flow</a>
-            <a href="#scale">Zyan Scale</a>
+            <a href="index.html#about">About</a>
+            <a href="services.html" style="-webkit-text-fill-color:white;color:white;">Services</a>
+            <a href="blog.html">Blog</a>
             <a href="index.html#contact">Contact</a>
         </nav>
-
+        <button class="hamburger" id="navToggle" aria-label="Toggle menu" aria-expanded="false">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
     </header>
 
-
     <!-- HERO -->
-    <section class="hero" style="min-height: 70vh;">
+    <div class="gateway-hero">
+        <h1><span class="gradient-text">What We Build</span></h1>
+        <p>Three focused services. One goal — turning your digital presence into a growth engine.</p>
+    </div>
 
-        <div class="container">
+    <!-- SERVICE CARDS -->
+    <div class="gateway-grid">
 
-            <h1>Our <span>Growth Systems</span></h1>
-
-            <p>Three structured systems built to attract, convert, and retain more customers.</p>
-
-            <div class="services-nav-pills">
-                <a href="#core" class="service-pill">Zyan Core &mdash; Website</a>
-                <a href="#flow" class="service-pill">Zyan Flow &mdash; Automation</a>
-                <a href="#scale" class="service-pill">Zyan Scale &mdash; Growth</a>
+        <!-- Business Websites -->
+        <a class="gateway-card fade-in" href="website.html" id="card-website">
+            <div class="gateway-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="3" width="18" height="18" rx="3"/>
+                    <path d="M3 9h18M9 21V9"/>
+                </svg>
             </div>
+            <h2>Business Websites</h2>
+            <p>Conversion-focused websites built to turn visitors into customers.</p>
+            <span class="gateway-arrow">
+                Explore
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#7c5cff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="5" y1="12" x2="19" y2="12"/>
+                    <polyline points="12 5 19 12 12 19"/>
+                </svg>
+            </span>
+        </a>
 
+        <!-- E-Commerce -->
+        <a class="gateway-card fade-in" href="ecommerce.html" id="card-ecommerce">
+            <div class="gateway-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+                </svg>
+            </div>
+            <h2>E-Commerce Stores</h2>
+            <p>Seamless online stores designed for high-performance selling.</p>
+            <span class="gateway-arrow">
+                Explore
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#7c5cff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="5" y1="12" x2="19" y2="12"/>
+                    <polyline points="12 5 19 12 12 19"/>
+                </svg>
+            </span>
+        </a>
+
+        <!-- SaaS -->
+        <a class="gateway-card fade-in" href="saas.html" id="card-saas">
+            <div class="gateway-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="2" y="3" width="20" height="14" rx="2"/>
+                    <path d="M8 21h8M12 17v4"/>
+                    <path d="M7 8h.01M11 8h6"/>
+                </svg>
+            </div>
+            <h2>SaaS Software</h2>
+            <p>Custom platforms built to automate and scale your business.</p>
+            <span class="gateway-arrow">
+                Explore
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#7c5cff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="5" y1="12" x2="19" y2="12"/>
+                    <polyline points="12 5 19 12 12 19"/>
+                </svg>
+            </span>
+        </a>
+
+    </div>
+
+    <!-- SITE FOOTER -->
+    <footer class="site-footer">
+        <div class="footer-inner">
+            <div class="footer-brand">
+                <a href="index.html" class="logo">ZyanLabs</a>
+                <p>We build the systems that turn your business into a growth engine — websites, automation, and CRO that actually move the needle.</p>
+            </div>
+            <div class="footer-col">
+                <h4>Company</h4>
+                <ul>
+                    <li><a href="index.html#systems">Systems</a></li>
+                    <li><a href="services.html">Services</a></li>
+                    <li><a href="index.html#about">About</a></li>
+                    <li><a href="blog.html">Blog</a></li>
+                    <li><a href="index.html#contact">Contact</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Legal</h4>
+                <ul>
+                    <li><a href="privacy.html">Privacy Policy</a></li>
+                    <li><a href="terms.html">Terms &amp; Conditions</a></li>
+                    <li><a href="refund.html">Refund Policy</a></li>
+                    <li><a href="disclaimer.html">Disclaimer</a></li>
+                </ul>
+            </div>
         </div>
-
-    </section>
-
-
-    <!-- ================================
-         ZYAN CORE
-    ================================= -->
-    <section id="core" class="section">
-
-        <div class="container">
-
-            <div class="service-section-label">Zyan Core</div>
-
-            <h2>High-Performance Website Development</h2>
-
-            <p class="systems-subtitle">
-                A conversion-focused website engineered to turn visitors into customers —
-                fast, clean, and built to grow with your business.
-            </p>
-
-
-            <!-- POSITIONING -->
-            <div class="about-grid" style="margin-top: 60px;">
-
-                <div class="about-left">
-                    <h3>Built to Convert, Not Just to Look Good</h3>
-                    <p>
-                        Most websites look fine but fail to generate leads.
-                        We design and build with one goal: turning your traffic
-                        into real business results.
-                    </p>
-                </div>
-
-                <div class="about-right">
-                    <h3>Fast, Reliable, and Scalable</h3>
-                    <p>
-                        Your website should load instantly, work on every device,
-                        and grow with your business — without constant rebuilds.
-                    </p>
-                </div>
-
+        <div class="footer-bottom">
+            <p>&copy; 2025 ZyanLabs. All rights reserved.</p>
+            <div class="footer-legal-links">
+                <a href="privacy.html">Privacy</a>
+                <a href="terms.html">Terms</a>
+                <a href="refund.html">Refund</a>
+                <a href="disclaimer.html">Disclaimer</a>
             </div>
-
-
-            <!-- WHAT'S INCLUDED -->
-            <h3 class="subsection-heading">What's Included</h3>
-
-            <div class="services-container">
-
-                <div class="service-card">
-                    <h3>Conversion-Focused Design</h3>
-                    <p>Every page is structured to guide visitors toward taking action — booking, buying, or contacting.</p>
-                </div>
-
-                <div class="service-card">
-                    <h3>Speed & Performance</h3>
-                    <p>Optimized load times, clean code, and technical best practices for a seamless user experience.</p>
-                </div>
-
-                <div class="service-card">
-                    <h3>Mobile-First Build</h3>
-                    <p>Fully responsive layouts that work flawlessly across all devices and screen sizes.</p>
-                </div>
-
-            </div>
-
-
-            <!-- HOW IT WORKS -->
-            <h3 class="subsection-heading">How We Build It</h3>
-
-            <div class="services-container">
-
-                <div class="service-card">
-                    <h3>01 &mdash; Discovery & Strategy</h3>
-                    <p>We learn your business goals, target audience, and competitive landscape to inform every design decision.</p>
-                </div>
-
-                <div class="service-card">
-                    <h3>02 &mdash; Design & Development</h3>
-                    <p>We build a fast, conversion-optimized website aligned with your brand and business goals.</p>
-                </div>
-
-                <div class="service-card">
-                    <h3>03 &mdash; Launch & Handoff</h3>
-                    <p>We deploy your site, test everything, and ensure you can manage content going forward.</p>
-                </div>
-
-            </div>
-
-
-            <!-- ENGAGEMENT OPTIONS -->
-            <h3 class="subsection-heading">Engagement Options</h3>
-
-            <div class="pricing-container">
-
-                <div class="pricing-card small-plan">
-
-                    <h3>Starter Website</h3>
-
-                    <ul class="pricing-features">
-                        <li>Up to 5 pages</li>
-                        <li>Conversion-focused layout</li>
-                        <li>Mobile-responsive design</li>
-                    </ul>
-
-                    <p style="margin-top:15px; font-size:14px; opacity:0.8;">
-                        Ideal for new businesses establishing their online presence.
-                    </p>
-
-                    <a href="index.html#contact" class="btn">Request Proposal</a>
-
-                </div>
-
-
-                <div class="pricing-card featured-plan">
-
-                    <div class="plan-badge">Most Popular</div>
-
-                    <h3>Growth Website</h3>
-
-                    <ul class="pricing-features">
-                        <li>Up to 10 pages</li>
-                        <li>Advanced conversion architecture</li>
-                        <li>Speed & SEO optimization</li>
-                        <li>Lead capture integration</li>
-                    </ul>
-
-                    <p style="margin-top:15px; font-size:14px; opacity:0.8;">
-                        Built for businesses actively generating leads and sales online.
-                    </p>
-
-                    <a href="index.html#contact" class="btn">Schedule Strategy Call</a>
-
-                </div>
-
-
-                <div class="pricing-card small-plan">
-
-                    <h3>Enterprise Website</h3>
-
-                    <ul class="pricing-features">
-                        <li>Custom page count</li>
-                        <li>Complex integrations</li>
-                        <li>Multi-language support</li>
-                        <li>Dedicated build team</li>
-                    </ul>
-
-                    <p style="margin-top:15px; font-size:14px; opacity:0.8;">
-                        For companies scaling across markets and regions.
-                    </p>
-
-                    <a href="index.html#contact" class="btn">Partner With Us</a>
-
-                </div>
-
-            </div>
-
         </div>
+    </footer>
 
-    </section>
-
-
-    <div class="section-divider"></div>
-
-
-    <!-- ================================
-         ZYAN FLOW
-    ================================= -->
-    <section id="flow" class="section">
-
-        <div class="container">
-
-            <div class="service-section-label">Zyan Flow</div>
-
-            <h2>Automated Lead Generation & Follow-Up</h2>
-
-            <p class="systems-subtitle">
-                Capture, qualify, and convert leads automatically — through WhatsApp, your website,
-                and landing pages — without increasing manual work.
-            </p>
-
-
-            <!-- POSITIONING -->
-            <div class="about-grid" style="margin-top: 60px;">
-
-                <div>
-                    <h3>Capture Leads Instantly</h3>
-                    <p>
-                        Automatically collect and organize new inquiries from your website,
-                        WhatsApp, or landing pages without missing opportunities.
-                    </p>
-                </div>
-
-                <div>
-                    <h3>Follow Up Without Manual Work</h3>
-                    <p>
-                        Smart automated messages nurture your leads, answer common questions,
-                        and guide prospects toward booking or purchasing.
-                    </p>
-                </div>
-
-            </div>
-
-
-            <!-- WHAT'S INCLUDED -->
-            <h3 class="subsection-heading">What's Included</h3>
-
-            <div class="services-container">
-
-                <div class="service-card">
-                    <h3>WhatsApp Automation</h3>
-                    <p>Instant replies, structured conversations, and automatic lead routing.</p>
-                </div>
-
-                <div class="service-card">
-                    <h3>Lead Qualification System</h3>
-                    <p>Identify serious prospects and prioritize high-value inquiries.</p>
-                </div>
-
-                <div class="service-card">
-                    <h3>CRM & Tracking Setup</h3>
-                    <p>All leads stored, tracked, and organized in one clear system.</p>
-                </div>
-
-            </div>
-
-
-            <!-- HOW IT WORKS -->
-            <h3 class="subsection-heading">How It Works</h3>
-
-            <div class="services-container">
-
-                <div class="service-card">
-                    <h3>01 &mdash; Strategy & Setup</h3>
-                    <p>We map your customer journey and design the automation flow.</p>
-                </div>
-
-                <div class="service-card">
-                    <h3>02 &mdash; System Deployment</h3>
-                    <p>We connect WhatsApp, your website, and your CRM into one automated system.</p>
-                </div>
-
-                <div class="service-card">
-                    <h3>03 &mdash; Optimization</h3>
-                    <p>We refine the system to increase response rates and conversions over time.</p>
-                </div>
-
-            </div>
-
-
-            <!-- ENGAGEMENT OPTIONS -->
-            <h3 class="subsection-heading">Engagement Options</h3>
-
-            <div class="pricing-container">
-
-                <div class="pricing-card small-plan">
-
-                    <h3>Starter Automation Setup</h3>
-
-                    <ul class="pricing-features">
-                        <li>Basic lead capture setup</li>
-                        <li>WhatsApp auto-reply flows</li>
-                        <li>CRM connection</li>
-                    </ul>
-
-                    <p style="margin-top:15px; font-size:14px; opacity:0.8;">
-                        Ideal for businesses starting automation.
-                    </p>
-
-                    <a href="index.html#contact" class="btn">Request Proposal</a>
-
-                </div>
-
-
-                <div class="pricing-card featured-plan">
-
-                    <div class="plan-badge">Most Popular</div>
-
-                    <h3>Growth Automation System</h3>
-
-                    <ul class="pricing-features">
-                        <li>Advanced qualification flows</li>
-                        <li>Lead scoring & segmentation</li>
-                        <li>Performance tracking dashboard</li>
-                        <li>Ongoing optimization support</li>
-                    </ul>
-
-                    <p style="margin-top:15px; font-size:14px; opacity:0.8;">
-                        Designed for growing businesses increasing lead volume.
-                    </p>
-
-                    <a href="index.html#contact" class="btn">Schedule Strategy Call</a>
-
-                </div>
-
-
-                <div class="pricing-card small-plan">
-
-                    <h3>Enterprise Automation</h3>
-
-                    <ul class="pricing-features">
-                        <li>Multi-channel automation</li>
-                        <li>Full CRM system setup</li>
-                        <li>Custom workflow development</li>
-                        <li>Long-term strategic support</li>
-                    </ul>
-
-                    <p style="margin-top:15px; font-size:14px; opacity:0.8;">
-                        Built for companies managing high lead volume.
-                    </p>
-
-                    <a href="index.html#contact" class="btn">Partner With Us</a>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-    <div class="section-divider"></div>
-
-
-    <!-- ================================
-         ZYAN SCALE
-    ================================= -->
-    <section id="scale" class="section">
-
-        <div class="container">
-
-            <div class="service-section-label">Zyan Scale</div>
-
-            <h2>Continuous Growth & Conversion Optimization</h2>
-
-            <p class="systems-subtitle">
-                Turn existing traffic into more leads and sales. We use real data to improve
-                your website performance and drive consistent long-term growth.
-            </p>
-
-
-            <!-- POSITIONING -->
-            <div class="about-grid" style="margin-top: 60px;">
-
-                <div>
-                    <h3>Find What's Blocking Conversions</h3>
-                    <p>
-                        We analyze how visitors move through your website,
-                        where they lose interest, and why they don't take action.
-                    </p>
-                </div>
-
-                <div>
-                    <h3>Improve What Increases Revenue</h3>
-                    <p>
-                        We refine your layout, messaging, calls-to-action, and structure
-                        to help you generate more inquiries, bookings, and direct sales.
-                    </p>
-                </div>
-
-            </div>
-
-
-            <!-- WHAT WE OPTIMIZE -->
-            <h3 class="subsection-heading">What We Optimize</h3>
-
-            <div class="services-container">
-
-                <div class="service-card">
-                    <h3>User Behavior Tracking</h3>
-                    <p>See how visitors interact with your website using heatmaps and analytics.</p>
-                </div>
-
-                <div class="service-card">
-                    <h3>Conversion Rate Improvement</h3>
-                    <p>Test and improve headlines, layouts, and calls-to-action to increase results.</p>
-                </div>
-
-                <div class="service-card">
-                    <h3>Speed & Performance</h3>
-                    <p>Improve loading times and technical structure for better user experience.</p>
-                </div>
-
-            </div>
-
-
-            <!-- HOW IT WORKS -->
-            <h3 class="subsection-heading">How the Process Works</h3>
-
-            <div class="services-container">
-
-                <div class="service-card">
-                    <h3>01 &mdash; Performance Review</h3>
-                    <p>We evaluate your current website, traffic, and conversion data.</p>
-                </div>
-
-                <div class="service-card">
-                    <h3>02 &mdash; Identify Opportunities</h3>
-                    <p>We find weak points, drop-offs, and areas where customers lose interest.</p>
-                </div>
-
-                <div class="service-card">
-                    <h3>03 &mdash; Continuous Improvement</h3>
-                    <p>We implement changes and track results to improve performance over time.</p>
-                </div>
-
-            </div>
-
-
-            <!-- ENGAGEMENT OPTIONS -->
-            <h3 class="subsection-heading">Engagement Options</h3>
-
-            <div class="pricing-container">
-
-                <div class="pricing-card small-plan">
-
-                    <h3>Website Performance Audit</h3>
-
-                    <ul class="pricing-features">
-                        <li>Full website review</li>
-                        <li>Conversion improvement recommendations</li>
-                        <li>Action plan for growth</li>
-                    </ul>
-
-                    <p style="margin-top:15px; font-size:14px; opacity:0.8;">
-                        Ideal for businesses wanting clarity and direction.
-                    </p>
-
-                    <a href="index.html#contact" class="btn">Request Audit</a>
-
-                </div>
-
-
-                <div class="pricing-card featured-plan">
-
-                    <div class="plan-badge">Most Popular</div>
-
-                    <h3>Ongoing Optimization Support</h3>
-
-                    <ul class="pricing-features">
-                        <li>Continuous performance monitoring</li>
-                        <li>A/B testing and improvement</li>
-                        <li>Conversion tracking and reporting</li>
-                        <li>Strategic growth guidance</li>
-                    </ul>
-
-                    <p style="margin-top:15px; font-size:14px; opacity:0.8;">
-                        Designed for growing businesses increasing traffic and leads.
-                    </p>
-
-                    <a href="index.html#contact" class="btn">Start Optimization</a>
-
-                </div>
-
-
-                <div class="pricing-card small-plan">
-
-                    <h3>Enterprise Growth Partnership</h3>
-
-                    <ul class="pricing-features">
-                        <li>Multi-site optimization</li>
-                        <li>Advanced tracking setup</li>
-                        <li>Dedicated performance support</li>
-                        <li>Long-term strategy collaboration</li>
-                    </ul>
-
-                    <p style="margin-top:15px; font-size:14px; opacity:0.8;">
-                        Built for companies scaling across markets.
-                    </p>
-
-                    <a href="index.html#contact" class="btn">Partner With Us</a>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-    <!-- FINAL CTA -->
-    <section class="section contact-section">
-
-        <div class="contact-wrapper">
-
-            <h2>Ready to Build Your Growth System?</h2>
-
-            <p class="contact-intro">
-                Tell us about your business and goals.
-                We'll recommend the right system and next steps.
-            </p>
-
-            <a href="index.html#contact" class="btn">Book a Strategy Call</a>
-
-        </div>
-
-    </section>
-
-
-    <!-- PARTICLES LIBRARY -->
     <script src="https://cdn.jsdelivr.net/npm/tsparticles@2/tsparticles.bundle.min.js"></script>
-
     <script src="script.js"></script>
 
-</body>
+    <script>
+        /* micro-scroll then navigate */
+        document.querySelectorAll('.gateway-card').forEach(card => {
+            card.addEventListener('click', function (e) {
+                e.preventDefault();
+                const dest = this.getAttribute('href');
+                window.scrollBy({ top: 40, behavior: 'smooth' });
+                setTimeout(() => { window.location.href = dest; }, 220);
+            });
+        });
+    </script>
 
+    <script src="nav.js"></script>
+</body>
 </html>

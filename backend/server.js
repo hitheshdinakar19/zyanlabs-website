@@ -3,7 +3,10 @@ require('dotenv').config();
 const express    = require('express');
 const nodemailer = require('nodemailer');
 const cors       = require('cors');
+const session    = require('express-session');
+const bcrypt     = require('bcryptjs');
 const http       = require('http');
+const path       = require('path');
 const { Server } = require('socket.io');
 const mongoose   = require('mongoose');
 const Chat       = require('./models/Chat');
@@ -15,6 +18,18 @@ const io     = new Server(server, {
     cors: { origin: '*', methods: ['GET', 'POST'] }
 });
 const PORT = process.env.PORT || 5000;
+
+/* ─────────────────────────────
+   ADMIN CREDENTIALS
+   Password is hashed once at startup — never stored in plain text.
+   Change via ADMIN_EMAIL / ADMIN_PASSWORD env vars before deploying.
+───────────────────────────── */
+
+const ADMIN_EMAIL = (process.env.ADMIN_EMAIL    || 'admin@zyanlabs.com').toLowerCase().trim();
+const ADMIN_HASH  =  bcrypt.hashSync(
+    process.env.ADMIN_PASSWORD || 'Zyan@123',
+    12
+);
 
 /* ─────────────────────────────
    MONGODB CONNECTION
@@ -29,8 +44,92 @@ mongoose
    MIDDLEWARE
 ───────────────────────────── */
 
-app.use(cors());
+app.use(cors({ origin: true, credentials: true }));
 app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+
+app.use(session({
+    secret:            process.env.SESSION_SECRET || 'zyanlabs_secret_key',
+    resave:            false,
+    saveUninitialized: false,
+    cookie: {
+        httpOnly: true,
+        secure:   false,              // set to true when on HTTPS
+        maxAge:   24 * 60 * 60 * 1000 // 24 hours
+    }
+}));
+
+/* ─────────────────────────────
+   AUTH — SESSION HELPER
+───────────────────────────── */
+
+function requireSession(req, res, next) {
+    if (req.session && req.session.isAdmin) return next();
+    res.redirect('/login.html');
+}
+
+/* ─────────────────────────────
+   PROTECTED STATIC ROUTE
+   Registered BEFORE express.static so the session guard
+   intercepts /admin.html before the file can be served raw.
+───────────────────────────── */
+
+app.get('/admin.html', requireSession, (req, res) => {
+    res.sendFile(path.join(__dirname, '..', 'admin.html'));
+});
+
+/* ─────────────────────────────
+   STATIC FILES (whole website)
+───────────────────────────── */
+
+app.use(express.static(path.join(__dirname, '..')));
+
+/* ─────────────────────────────
+   AUTH API
+───────────────────────────── */
+
+// POST /api/login
+app.post('/api/login', async (req, res) => {
+    const { email = '', password = '' } = req.body;
+
+    if (!email || !password) {
+        return res.status(400).json({ success: false, error: 'Email and password are required.' });
+    }
+
+    const emailMatch    = email.toLowerCase().trim() === ADMIN_EMAIL;
+    const passwordMatch = emailMatch && await bcrypt.compare(password, ADMIN_HASH);
+
+    if (!emailMatch || !passwordMatch) {
+        return res.status(401).json({ success: false, error: 'Invalid credentials.' });
+    }
+
+    // Regenerate session ID on login to prevent session fixation attacks
+    req.session.regenerate(err => {
+        if (err) {
+            console.error('[session error]', err.message);
+            return res.status(500).json({ success: false, error: 'Server error.' });
+        }
+        req.session.isAdmin = true;
+        res.json({ success: true });
+    });
+});
+
+// GET /api/check-auth
+app.get('/api/check-auth', (req, res) => {
+    if (req.session && req.session.isAdmin) {
+        return res.json({ loggedIn: true });
+    }
+    res.status(401).json({ loggedIn: false });
+});
+
+// POST /api/logout
+app.post('/api/logout', (req, res) => {
+    req.session.destroy(err => {
+        if (err) console.error('[logout error]', err.message);
+        res.clearCookie('connect.sid');
+        res.json({ success: true });
+    });
+});
 
 /* ─────────────────────────────
    NODEMAILER — ZOHO SMTP
@@ -50,45 +149,31 @@ const transporter = nodemailer.createTransport({
    REAL-TIME CHAT — SOCKET.IO
 ───────────────────────────── */
 
-const admins        = new Set();  // admin socket IDs
-const socketToClient = new Map(); // socket.id → clientId
+const admins         = new Set();  // admin socket IDs
+const socketToClient = new Map();  // socket.id → clientId
 
 const WELCOME = "Hi 👋 Welcome to ZyanLabs! How can we help you today?";
 
 io.on('connection', (socket) => {
     console.log(`[socket] connected   ${socket.id}`);
 
-    // ── join ─────────────────────────────────────────────────────
-    // Client sends its persistent clientId on every (re)connect.
-    // We find or create the Chat document and return history.
     socket.on('join', async ({ clientId }) => {
         if (!clientId) return;
-
         socketToClient.set(socket.id, clientId);
         console.log(`[join]   ${socket.id}  clientId=${clientId}`);
-
         try {
             let chat = await Chat.findOne({ clientId });
-
             if (!chat) {
-                // First visit: save welcome message, return it as history
                 chat = await Chat.create({
                     clientId,
                     messages: [{ sender: 'admin', text: WELCOME }]
                 });
-
                 socket.emit('chat history', { messages: chat.messages });
-
             } else {
-                // Returning user: send full history
                 socket.emit('chat history', { messages: chat.messages });
-
-                // Notify all admins so they can see the returning user's context
                 admins.forEach(adminId => {
                     io.to(adminId).emit('user rejoined', {
-                        clientId,
-                        socketId: socket.id,
-                        messages: chat.messages
+                        clientId, socketId: socket.id, messages: chat.messages
                     });
                 });
             }
@@ -97,65 +182,43 @@ io.on('connection', (socket) => {
         }
     });
 
-    // ── register_admin ───────────────────────────────────────────
     socket.on('register_admin', () => {
         admins.add(socket.id);
         console.log(`[admin]  registered  ${socket.id}`);
     });
 
-    // ── chat message (user → admins) ─────────────────────────────
     socket.on('chat message', async ({ msg }) => {
         if (!msg || !msg.trim()) return;
-
         const clientId = socketToClient.get(socket.id);
-        console.log(`[user → admin]  ${socket.id}  "${msg}"`);
-
-        // Persist to MongoDB
         if (clientId) {
             try {
                 await Chat.updateOne(
                     { clientId },
                     { $push: { messages: { sender: 'user', text: msg.trim() } } }
                 );
-            } catch (err) {
-                console.error('[save user msg]', err.message);
-            }
+            } catch (err) { console.error('[save user msg]', err.message); }
         }
-
-        // Forward to all admins
         admins.forEach(adminId => {
             io.to(adminId).emit('user message', {
-                msg:      msg.trim(),
-                socketId: socket.id,
-                clientId: clientId || socket.id
+                msg: msg.trim(), socketId: socket.id, clientId: clientId || socket.id
             });
         });
     });
 
-    // ── admin reply (admin → specific user) ──────────────────────
     socket.on('admin reply', async ({ msg, socketId }) => {
         if (!msg || !socketId) return;
-
         const clientId = socketToClient.get(socketId);
-        console.log(`[admin → user]   ${socketId}  "${msg}"`);
-
-        // Persist to MongoDB
         if (clientId) {
             try {
                 await Chat.updateOne(
                     { clientId },
                     { $push: { messages: { sender: 'admin', text: msg } } }
                 );
-            } catch (err) {
-                console.error('[save admin reply]', err.message);
-            }
+            } catch (err) { console.error('[save admin reply]', err.message); }
         }
-
-        // Deliver to user
         io.to(socketId).emit('chat message', { sender: 'admin', msg });
     });
 
-    // ── disconnect ───────────────────────────────────────────────
     socket.on('disconnect', () => {
         admins.delete(socket.id);
         socketToClient.delete(socket.id);
@@ -164,17 +227,15 @@ io.on('connection', (socket) => {
 });
 
 /* ─────────────────────────────
-   REST ROUTES
+   BLOG ROUTES
 ───────────────────────────── */
 
-app.get('/', (_req, res) => {
-    res.json({ status: 'ZyanLabs backend is running.' });
-});
-
-// ── Blog routes ───────────────────────────────────────────────────────────
 app.use('/api/blogs', blogRoutes);
 
-// ── POST /api/contact ─────────────────────────────────────────────────────
+/* ─────────────────────────────
+   CONTACT FORM
+───────────────────────────── */
+
 app.post('/api/contact', async (req, res) => {
     const { name, email, service, budget, message } = req.body;
 
@@ -185,14 +246,10 @@ app.post('/api/contact', async (req, res) => {
     const html = `
     <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;
                 background:#0f172a;color:#ffffff;padding:36px;border-radius:14px;">
-
-      <h2 style="margin:0 0 8px;color:#7c5cff;font-size:22px;">
-        New Enquiry — ZyanLabs
-      </h2>
+      <h2 style="margin:0 0 8px;color:#7c5cff;font-size:22px;">New Enquiry — ZyanLabs</h2>
       <p style="margin:0 0 28px;color:rgba(255,255,255,0.45);font-size:13px;">
         Submitted via the ZyanLabs contact form
       </p>
-
       <table style="width:100%;border-collapse:collapse;">
         <tr>
           <td style="padding:10px 0;color:rgba(255,255,255,0.5);font-size:13px;width:130px;">Name</td>
@@ -201,8 +258,9 @@ app.post('/api/contact', async (req, res) => {
         <tr>
           <td style="padding:10px 0;color:rgba(255,255,255,0.5);font-size:13px;">Email</td>
           <td style="padding:10px 0;">
-            <a href="mailto:${escapeHtml(email)}"
-               style="color:#5aa9ff;text-decoration:none;">${escapeHtml(email)}</a>
+            <a href="mailto:${escapeHtml(email)}" style="color:#5aa9ff;text-decoration:none;">
+              ${escapeHtml(email)}
+            </a>
           </td>
         </tr>
         <tr>
@@ -214,14 +272,14 @@ app.post('/api/contact', async (req, res) => {
           <td style="padding:10px 0;">${escapeHtml(budget || '—')}</td>
         </tr>
       </table>
-
       <div style="margin-top:24px;padding:18px;background:rgba(255,255,255,0.05);
                   border-radius:10px;border-left:3px solid #7c5cff;">
         <p style="margin:0 0 8px;color:rgba(255,255,255,0.45);
                   font-size:12px;letter-spacing:1px;text-transform:uppercase;">Message</p>
-        <p style="margin:0;line-height:1.75;white-space:pre-wrap;">${escapeHtml(message || 'No message provided.')}</p>
+        <p style="margin:0;line-height:1.75;white-space:pre-wrap;">
+          ${escapeHtml(message || 'No message provided.')}
+        </p>
       </div>
-
     </div>`;
 
     try {
@@ -257,5 +315,6 @@ function escapeHtml(str) {
 ───────────────────────────── */
 
 server.listen(PORT, () => {
-    console.log(`\n  ZyanLabs backend running → http://localhost:${PORT}`);
+    console.log(`\n  ZyanLabs server running → http://localhost:${PORT}`);
+    console.log(`  Admin login          → http://localhost:${PORT}/login.html\n`);
 });
