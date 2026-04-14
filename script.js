@@ -189,58 +189,168 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     /* ===============================
-       ZYAN CHAT
+       API BASE URL + SOCKET
     =============================== */
 
-    const chat = document.querySelector(".zyan-chat");
-    const openChat = document.getElementById("openChat");
-    const closeChat = document.getElementById("closeChat");
-    const chatBody = document.getElementById("chatBody");
+    const API_BASE = "http://localhost:5000";
+    const socket   = io(API_BASE);
 
-    if (chat && openChat && closeChat && chatBody) {
+    // Persistent client ID — generated once, stored in localStorage,
+    // survives page refresh so chat history loads on every return visit.
+    function getClientId() {
+        let id = localStorage.getItem("zyan_client_id");
+        if (!id) {
+            id = "c_" + Date.now().toString(36) + "_" + Math.random().toString(36).slice(2, 8);
+            localStorage.setItem("zyan_client_id", id);
+        }
+        return id;
+    }
+    const clientId = getClientId();
 
-        openChat.addEventListener("click", () => {
-            chat.style.display = "flex";
+    // Tell the server our identity on every (re)connect
+    socket.on("connect", () => socket.emit("join", { clientId }));
+
+    /* ===============================
+       CONTACT FORM — API SUBMIT
+    =============================== */
+
+    const contactForm = document.querySelector(".contact-form");
+
+    if (contactForm) {
+        contactForm.addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            const selects   = contactForm.querySelectorAll("select");
+            const service   = selects[0] ? selects[0].value : "";
+            const budget    = selects[1] ? selects[1].value : "";
+            const name      = contactForm.querySelector("input[type='text']")?.value.trim()  || "";
+            const email     = contactForm.querySelector("input[type='email']")?.value.trim() || "";
+            const message   = contactForm.querySelector("textarea")?.value.trim()            || "";
+
+            const submitBtn = contactForm.querySelector("button[type='submit']");
+            if (submitBtn) {
+                submitBtn.disabled    = true;
+                submitBtn.textContent = "Sending…";
+            }
+
+            try {
+                const res  = await fetch(`${API_BASE}/api/contact`, {
+                    method:  "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body:    JSON.stringify({ name, email, service, budget, message }),
+                });
+                const data = await res.json();
+
+                if (data.success) {
+                    alert("Message sent! We'll be in touch shortly.");
+                    contactForm.reset();
+                } else {
+                    alert("Error sending message. Please try again.");
+                }
+            } catch {
+                alert("Error sending message. Please check your connection.");
+            } finally {
+                if (submitBtn) {
+                    submitBtn.disabled    = false;
+                    submitBtn.textContent = "Request Strategy Call";
+                }
+            }
+        });
+    }
+
+    /* ===============================
+       ZYAN CHAT — SOCKET.IO
+    =============================== */
+
+    const chatWidget   = document.getElementById("zyanChat");
+    const openChatBtn  = document.getElementById("openChat");
+    const closeChatBtn = document.getElementById("closeChat");
+    const chatBody     = document.getElementById("chatBody");
+
+    // Append a bubble — available immediately so socket events can use it
+    function appendBubble(text, role) {
+        if (!chatBody) return;
+        const div = document.createElement("div");
+        div.className = `chat-msg ${role}`;
+        div.textContent = text;
+        chatBody.appendChild(div);
+        chatBody.scrollTop = chatBody.scrollHeight;
+    }
+
+    // Soft reply chime for admin replies
+    let _chatAudioCtx = null;
+
+    function playReplyChime() {
+        try {
+            if (!_chatAudioCtx) {
+                _chatAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            const ctx  = _chatAudioCtx;
+            const osc  = ctx.createOscillator();
+            const gain = ctx.createGain();
+
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+
+            // Softer ascending chime: 550 Hz → 770 Hz over 220 ms
+            osc.type = "sine";
+            osc.frequency.setValueAtTime(550, ctx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(770, ctx.currentTime + 0.11);
+
+            gain.gain.setValueAtTime(0.18, ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.22);
+
+            osc.start(ctx.currentTime);
+            osc.stop(ctx.currentTime + 0.22);
+        } catch (_) {
+            // Fail silently if AudioContext is blocked
+        }
+    }
+
+    // Load full chat history on (re)connect — renders all past messages from DB
+    socket.on("chat history", ({ messages }) => {
+        if (!chatBody || !messages || !messages.length) return;
+        chatBody.innerHTML = "";
+        messages.forEach(({ sender, text }) => {
+            appendBubble(text, sender === "admin" ? "bot" : "user");
+        });
+    });
+
+    // Real-time admin reply — welcome is in history, so always play chime here
+    socket.on("chat message", ({ sender, msg }) => {
+        appendBubble(msg, sender === "admin" ? "bot" : "user");
+        if (sender === "admin") playReplyChime();
+    });
+
+    if (chatWidget && openChatBtn && closeChatBtn && chatBody) {
+
+        // Toggle open / close
+        openChatBtn.addEventListener("click", () => {
+            chatWidget.classList.toggle("open");
+            if (chatWidget.classList.contains("open")) {
+                document.getElementById("userInput")?.focus();
+            }
         });
 
-        closeChat.addEventListener("click", () => {
-            chat.style.display = "none";
+        closeChatBtn.addEventListener("click", () => {
+            chatWidget.classList.remove("open");
         });
 
+        // Send message via socket — NO auto-reply (admin handles it)
         window.sendMessage = function () {
-            const input = document.getElementById("userInput");
+            const input   = document.getElementById("userInput");
             const message = input.value.trim();
             if (!message) return;
 
-            const userDiv = document.createElement("div");
-            userDiv.className = "user-message";
-            userDiv.innerText = message;
-            chatBody.appendChild(userDiv);
-
             input.value = "";
-
-            setTimeout(() => {
-                const botDiv = document.createElement("div");
-                botDiv.className = "bot-message";
-
-                const lower = message.toLowerCase();
-
-                if (lower.includes("price")) {
-                    botDiv.innerText =
-                        "Investment depends on scope. Zyan recommends a short strategy call to define architecture first.";
-                } else if (lower.includes("website")) {
-                    botDiv.innerText =
-                        "We engineer high-performance growth systems — not brochure websites.";
-                } else {
-                    botDiv.innerText =
-                        "Understood. Zyan will help architect the right solution for you.";
-                }
-
-                chatBody.appendChild(botDiv);
-                chatBody.scrollTop = chatBody.scrollHeight;
-
-            }, 600);
+            appendBubble(message, "user");
+            socket.emit("chat message", { msg: message });
         };
+
+        // Enter key to send
+        document.getElementById("userInput")?.addEventListener("keydown", (e) => {
+            if (e.key === "Enter") sendMessage();
+        });
     }
 
 });

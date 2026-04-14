@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>ZyanLabs — Admin Chat</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* ── Reset ─────────────────────────────────── */
+        *, *::before, *::after {
+            margin: 0; padding: 0; box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: #0f172a;
+            color: #ffffff;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* ── Header ─────────────────────────────────── */
+        header {
+            padding: 14px 28px;
+            background: rgba(15, 23, 42, 0.98);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-shrink: 0;
+        }
+
+        .logo {
+            font-size: 17px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            background: linear-gradient(90deg, #5aa9ff, #7c5cff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .conn-status {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.45);
+        }
+
+        .conn-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #64748b;
+            transition: background 0.3s;
+        }
+
+        .conn-dot.online  { background: #22c55e; }
+        .conn-dot.offline { background: #ef4444; }
+
+        /* ── Layout ─────────────────────────────────── */
+        .layout {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        /* ── Sidebar: user list ──────────────────────── */
+        .sidebar {
+            width: 230px;
+            border-right: 1px solid rgba(255, 255, 255, 0.07);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .sidebar-heading {
+            padding: 14px 18px 10px;
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.35);
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .user-list {
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .user-list::-webkit-scrollbar { width: 3px; }
+        .user-list::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+        }
+
+        .user-item {
+            padding: 12px 18px;
+            cursor: pointer;
+            border-left: 3px solid transparent;
+            transition: background 0.15s, border-color 0.15s;
+        }
+
+        .user-item:hover { background: rgba(255, 255, 255, 0.04); }
+
+        .user-item.active {
+            background: rgba(124, 92, 255, 0.1);
+            border-left-color: #7c5cff;
+        }
+
+        .user-id {
+            font-size: 12px;
+            font-weight: 600;
+            font-family: monospace;
+            color: rgba(255, 255, 255, 0.85);
+        }
+
+        .user-preview {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.38);
+            margin-top: 3px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .unread-badge {
+            display: inline-block;
+            background: #7c5cff;
+            color: white;
+            border-radius: 10px;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 1px 6px;
+            margin-left: 6px;
+            vertical-align: middle;
+        }
+
+        .no-users {
+            padding: 28px 18px;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.25);
+            text-align: center;
+            line-height: 1.7;
+        }
+
+        /* ── Main chat panel ─────────────────────────── */
+        .chat-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .panel-header {
+            padding: 13px 22px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.5);
+            flex-shrink: 0;
+        }
+
+        .panel-header strong {
+            color: white;
+            font-family: monospace;
+        }
+
+        /* ── Message feed ────────────────────────────── */
+        .feed {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .feed::-webkit-scrollbar { width: 4px; }
+        .feed::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 4px;
+        }
+
+        .msg-row { display: flex; flex-direction: column; }
+        .msg-row.from-admin { align-items: flex-end; }
+
+        .msg-meta {
+            font-size: 10px;
+            color: rgba(255, 255, 255, 0.3);
+            margin-bottom: 4px;
+        }
+
+        .bubble {
+            max-width: 68%;
+            padding: 9px 14px;
+            border-radius: 12px;
+            font-size: 13px;
+            line-height: 1.55;
+            word-break: break-word;
+        }
+
+        .bubble.from-user {
+            background: rgba(255, 255, 255, 0.07);
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            border-bottom-left-radius: 3px;
+            color: rgba(255, 255, 255, 0.85);
+        }
+
+        .bubble.from-admin {
+            background: linear-gradient(90deg, #3b82f6, #7c5cff);
+            color: white;
+            border-bottom-right-radius: 3px;
+        }
+
+        /* ── Empty / placeholder states ──────────────── */
+        .empty-state {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: rgba(255, 255, 255, 0.2);
+            gap: 10px;
+            font-size: 13px;
+        }
+
+        /* ── Reply bar ───────────────────────────────── */
+        .reply-bar {
+            padding: 14px 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.07);
+            display: flex;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+
+        .reply-bar input {
+            flex: 1;
+            padding: 10px 14px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 13px;
+            font-family: 'Poppins', sans-serif;
+            transition: border-color 0.2s;
+        }
+
+        .reply-bar input:focus {
+            outline: none;
+            border-color: rgba(124, 92, 255, 0.5);
+        }
+
+        .reply-bar input::placeholder { color: rgba(255, 255, 255, 0.28); }
+
+        .reply-bar input:disabled,
+        .reply-bar button:disabled {
+            opacity: 0.35;
+            cursor: not-allowed;
+        }
+
+        .reply-bar button {
+            padding: 10px 22px;
+            border-radius: 8px;
+            background: linear-gradient(90deg, #3b82f6, #9333ea);
+            border: none;
+            color: white;
+            font-size: 13px;
+            font-weight: 600;
+            font-family: 'Poppins', sans-serif;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .reply-bar button:not(:disabled):hover { opacity: 0.85; }
+    </style>
+</head>
+
+<body>
+
+    <!-- HEADER -->
+    <header>
+        <span class="logo">ZyanLabs</span>
+        <div class="conn-status">
+            <span class="conn-dot" id="connDot"></span>
+            <span id="connLabel">Connecting…</span>
+        </div>
+    </header>
+
+
+    <!-- LAYOUT -->
+    <div class="layout">
+
+        <!-- SIDEBAR -->
+        <div class="sidebar">
+            <div class="sidebar-heading">Active Users</div>
+            <div class="user-list" id="userList">
+                <div class="no-users">Waiting for<br>incoming chats…</div>
+            </div>
+        </div>
+
+
+        <!-- CHAT PANEL -->
+        <div class="chat-panel">
+
+            <div class="panel-header" id="panelHeader">
+                Select a user from the sidebar to reply
+            </div>
+
+            <div class="feed" id="feed">
+                <div class="empty-state" id="emptyState">
+                    <svg width="38" height="38" viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" stroke-width="1.5"
+                         stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                    </svg>
+                    <span>No conversation selected</span>
+                </div>
+            </div>
+
+            <div class="reply-bar">
+                <input type="text" id="adminInput"
+                       placeholder="Type a reply and press Enter…"
+                       autocomplete="off" disabled>
+                <button id="sendBtn" onclick="adminReply()" disabled>Send</button>
+            </div>
+
+        </div>
+    </div>
+
+
+    <script src="https://cdn.socket.io/4.8.0/socket.io.min.js"></script>
+    <script>
+        const API_BASE = "http://localhost:5000";
+        const socket   = io(API_BASE);
+
+        /* ── State ────────────────────────────────────────── */
+
+        // conversations: Map<clientId, { messages: Array, unread: number, socketId: String }>
+        // clientId is persistent across page refreshes; socketId updates on every reconnect.
+        const conversations = new Map();
+        let selectedUser = null;   // clientId of selected conversation
+
+        /* ── Notification sound (Web Audio API — no file needed) ─── */
+
+        let _audioCtx = null;
+
+        function playChime() {
+            try {
+                // AudioContext created lazily — requires a prior user gesture
+                if (!_audioCtx) {
+                    _audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                const ctx  = _audioCtx;
+                const osc  = ctx.createOscillator();
+                const gain = ctx.createGain();
+
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+
+                // Two-tone descending chime: 880 Hz → 660 Hz over 280 ms
+                osc.type = "sine";
+                osc.frequency.setValueAtTime(880, ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(660, ctx.currentTime + 0.14);
+
+                gain.gain.setValueAtTime(0.28, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.28);
+
+                osc.start(ctx.currentTime);
+                osc.stop(ctx.currentTime + 0.28);
+            } catch (_) {
+                // AudioContext blocked or unavailable — fail silently
+            }
+        }
+
+        /* ── Connection ───────────────────────────────────── */
+
+        socket.on("connect", () => {
+            socket.emit("register_admin");
+            setConnStatus(true);
+        });
+
+        socket.on("disconnect", () => setConnStatus(false));
+
+        function setConnStatus(online) {
+            document.getElementById("connDot").className   = `conn-dot ${online ? "online" : "offline"}`;
+            document.getElementById("connLabel").textContent = online ? "Connected" : "Disconnected";
+        }
+
+        /* ── Incoming user message ────────────────────────── */
+
+        socket.on("user message", ({ msg, socketId, clientId }) => {
+            playChime();
+
+            const key = clientId || socketId;  // always prefer persistent clientId
+
+            if (!conversations.has(key)) {
+                conversations.set(key, { messages: [], unread: 0, socketId });
+            }
+            const convo = conversations.get(key);
+            convo.socketId = socketId;   // refresh live socketId on every message
+            convo.messages.push({ from: "user", msg, time: new Date() });
+
+            if (selectedUser !== key) {
+                convo.unread++;
+                if (!selectedUser) selectUser(key);
+            } else {
+                renderBubble("user", msg);
+            }
+
+            renderSidebar();
+        });
+
+        // Returning user — load their full DB history into admin view
+        socket.on("user rejoined", ({ clientId, socketId, messages }) => {
+            if (!clientId) return;
+
+            if (!conversations.has(clientId)) {
+                conversations.set(clientId, {
+                    messages: messages.map(m => ({ from: m.sender, msg: m.text, time: new Date(m.timestamp) })),
+                    unread:   0,
+                    socketId
+                });
+            } else {
+                // User already known — just update their live socketId
+                conversations.get(clientId).socketId = socketId;
+            }
+
+            renderSidebar();
+        });
+
+        /* ── Select a user ────────────────────────────────── */
+
+        function selectUser(clientId) {
+            selectedUser = clientId;
+
+            const convo = conversations.get(clientId);
+            convo.unread = 0;
+
+            // Header — show shortened clientId
+            document.getElementById("panelHeader").innerHTML =
+                `Replying to <strong title="${clientId}">…${clientId.slice(-10)}</strong>`;
+
+            // Enable input
+            document.getElementById("adminInput").disabled = false;
+            document.getElementById("sendBtn").disabled    = false;
+
+            // Render full history
+            const feed = document.getElementById("feed");
+            feed.innerHTML = "";
+            convo.messages.forEach(m => renderBubble(m.from, m.msg));
+
+            renderSidebar();
+            document.getElementById("adminInput").focus();
+        }
+
+        /* ── Render a message bubble ──────────────────────── */
+
+        function renderBubble(from, msg) {
+            const feed = document.getElementById("feed");
+
+            // Remove empty-state placeholder
+            const empty = document.getElementById("emptyState");
+            if (empty) empty.remove();
+
+            const row    = document.createElement("div");
+            row.className = `msg-row ${from === "admin" ? "from-admin" : ""}`;
+
+            const meta       = document.createElement("div");
+            meta.className   = "msg-meta";
+            meta.textContent = from === "admin" ? "You" : "User";
+
+            const bubble       = document.createElement("div");
+            bubble.className   = `bubble from-${from}`;
+            bubble.textContent = msg;
+
+            row.appendChild(meta);
+            row.appendChild(bubble);
+            feed.appendChild(row);
+            feed.scrollTop = feed.scrollHeight;
+        }
+
+        /* ── Render sidebar ───────────────────────────────── */
+
+        function renderSidebar() {
+            const list = document.getElementById("userList");
+            list.innerHTML = "";
+
+            if (conversations.size === 0) {
+                list.innerHTML = `<div class="no-users">Waiting for<br>incoming chats…</div>`;
+                return;
+            }
+
+            conversations.forEach((convo, clientId) => {
+                const last = convo.messages[convo.messages.length - 1];
+                const item = document.createElement("div");
+                item.className = `user-item ${selectedUser === clientId ? "active" : ""}`;
+                item.onclick   = () => selectUser(clientId);
+
+                const badgeHtml = convo.unread > 0
+                    ? `<span class="unread-badge">${convo.unread}</span>` : "";
+
+                item.innerHTML = `
+                    <div class="user-id">…${clientId.slice(-10)}${badgeHtml}</div>
+                    <div class="user-preview">${last ? escapeHtml(last.msg) : ""}</div>`;
+
+                list.appendChild(item);
+            });
+        }
+
+        /* ── Send admin reply ─────────────────────────────── */
+
+        function adminReply() {
+            const input = document.getElementById("adminInput");
+            const msg   = input.value.trim();
+            if (!msg || !selectedUser) return;
+
+            const convo = conversations.get(selectedUser);
+            if (!convo || !convo.socketId) return;  // no live socket — user offline
+
+            // Route reply using the live socketId (not clientId)
+            socket.emit("admin reply", { msg, socketId: convo.socketId });
+            input.value = "";
+
+            convo.messages.push({ from: "admin", msg, time: new Date() });
+            renderBubble("admin", msg);
+        }
+
+        /* ── Enter key ────────────────────────────────────── */
+
+        document.getElementById("adminInput").addEventListener("keydown", e => {
+            if (e.key === "Enter") adminReply();
+        });
+
+        /* ── Helpers ──────────────────────────────────────── */
+
+        function escapeHtml(str) {
+            return String(str)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;");
+        }
+    </script>
+
+</body>
+</html>
