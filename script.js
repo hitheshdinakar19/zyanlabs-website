@@ -1,6 +1,65 @@
 document.addEventListener("DOMContentLoaded", function () {
 
     /* ===============================
+       DEVICE DETECTION
+    =============================== */
+
+    const isMobile = window.innerWidth < 768;
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    /* ===============================
+       HAMBURGER MENU
+    =============================== */
+
+    const hamburger = document.getElementById("hamburger");
+    const mobileNav = document.getElementById("mobile-nav");
+
+    if (hamburger && mobileNav) {
+
+        hamburger.addEventListener("click", () => {
+            const isOpen = hamburger.classList.toggle("open");
+            mobileNav.classList.toggle("open");
+            hamburger.setAttribute("aria-expanded", isOpen);
+            document.body.style.overflow = isOpen ? "hidden" : "";
+        });
+
+        // Close nav when any link is tapped
+        mobileNav.querySelectorAll("a").forEach(link => {
+            link.addEventListener("click", () => {
+                hamburger.classList.remove("open");
+                mobileNav.classList.remove("open");
+                hamburger.setAttribute("aria-expanded", "false");
+                document.body.style.overflow = "";
+            });
+        });
+
+        // Close nav on outside tap
+        document.addEventListener("click", (e) => {
+            if (
+                mobileNav.classList.contains("open") &&
+                !mobileNav.contains(e.target) &&
+                !hamburger.contains(e.target)
+            ) {
+                hamburger.classList.remove("open");
+                mobileNav.classList.remove("open");
+                hamburger.setAttribute("aria-expanded", "false");
+                document.body.style.overflow = "";
+            }
+        });
+
+        // Close nav on ESC key
+        document.addEventListener("keydown", (e) => {
+            if (e.key === "Escape" && mobileNav.classList.contains("open")) {
+                hamburger.classList.remove("open");
+                mobileNav.classList.remove("open");
+                hamburger.setAttribute("aria-expanded", "false");
+                document.body.style.overflow = "";
+            }
+        });
+
+    }
+
+    /* ===============================
        TS PARTICLES - NEURAL SYSTEM
     =============================== */
 
@@ -8,12 +67,12 @@ document.addEventListener("DOMContentLoaded", function () {
         tsParticles.load("tsparticles", {
             fullScreen: { enable: false },
             background: { color: "transparent" },
-            fpsLimit: 60,
-            detectRetina: true,
+            fpsLimit: isMobile ? 30 : 60,
+            detectRetina: !isMobile,
 
             particles: {
                 number: {
-                    value: 90,
+                    value: isMobile ? 25 : 90,
                     density: { enable: true, area: 1000 }
                 },
 
@@ -22,15 +81,15 @@ document.addEventListener("DOMContentLoaded", function () {
                 shape: { type: "circle" },
 
                 opacity: {
-                    value: 0.75
+                    value: isMobile ? 0.5 : 0.75
                 },
 
                 size: {
-                    value: { min: 1, max: 3 }
+                    value: { min: 1, max: isMobile ? 2 : 3 }
                 },
 
                 links: {
-                    enable: true,
+                    enable: !isMobile,
                     distance: 150,
                     color: "#6366f1",
                     opacity: 0.55,
@@ -39,7 +98,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 move: {
                     enable: true,
-                    speed: 1.2,
+                    speed: isMobile ? 0.6 : 1.2,
                     direction: "none",
                     random: false,
                     straight: false,
@@ -50,7 +109,7 @@ document.addEventListener("DOMContentLoaded", function () {
             interactivity: {
                 events: {
                     onHover: {
-                        enable: true,
+                        enable: !isMobile,
                         mode: ["grab", "attract"]
                     },
                     onClick: {
@@ -76,11 +135,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
     /* ===============================
        BACKGROUND PARALLAX
+       (desktop only — skip on mobile for perf)
     =============================== */
 
     const particleLayer = document.getElementById("tsparticles");
 
-    if (particleLayer) {
+    if (particleLayer && !isMobile && !prefersReducedMotion) {
         let ticking = false;
 
         window.addEventListener("scroll", () => {
@@ -97,30 +157,33 @@ document.addEventListener("DOMContentLoaded", function () {
 
     /* ===============================
        SERVICE CARD TILT EFFECT
+       (desktop only — no hover on touch)
     =============================== */
 
-    const cards = document.querySelectorAll(".service-card");
+    if (!isMobile) {
+        const cards = document.querySelectorAll(".service-card");
 
-    cards.forEach(card => {
-        card.addEventListener("mousemove", (e) => {
-            const rect = card.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
+        cards.forEach(card => {
+            card.addEventListener("mousemove", (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
 
-            const centerX = rect.width / 2;
-            const centerY = rect.height / 2;
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
 
-            const rotateX = ((y - centerY) / centerY) * 6;
-            const rotateY = ((x - centerX) / centerX) * -6;
+                const rotateX = ((y - centerY) / centerY) * 6;
+                const rotateY = ((x - centerX) / centerX) * -6;
 
-            card.style.transform =
-                `translateY(-16px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+                card.style.transform =
+                    `translateY(-16px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+            });
+
+            card.addEventListener("mouseleave", () => {
+                card.style.transform = "";
+            });
         });
-
-        card.addEventListener("mouseleave", () => {
-            card.style.transform = "";
-        });
-    });
+    }
 
     /* ===============================
        SCROLL FADE-IN
@@ -354,3 +417,24 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
 });
+
+/* ================================================
+   HEADER SCROLL EFFECT — premium polish, additive
+   Adds .scrolled class when page scrolls past 24px.
+   CSS in style.css handles the visual transition.
+================================================= */
+(function () {
+    var header = document.querySelector("header");
+    if (!header) return;
+
+    function updateHeader() {
+        if (window.scrollY > 24) {
+            header.classList.add("scrolled");
+        } else {
+            header.classList.remove("scrolled");
+        }
+    }
+
+    window.addEventListener("scroll", updateHeader, { passive: true });
+    updateHeader(); // apply immediately if page loads mid-scroll
+}());
