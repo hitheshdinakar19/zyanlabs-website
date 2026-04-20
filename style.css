@@ -227,7 +227,18 @@ nav a:hover {
 }
 
 @media (max-width: 768px) {
+    .logos-section {
+        margin-top: 40px;
+        margin-bottom: 40px;
+        padding: 0 16px;
+    }
+
+    .logos {
+        gap: 0;
+    }
+
     .trusted-companies {
+        width: 100%;
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: 14px;
@@ -244,6 +255,7 @@ nav a:hover {
     .trusted-companies .highlight {
         color: #a855f7;
         font-weight: 600;
+        grid-column: 1 / -1;
     }
 }
 
@@ -2724,23 +2736,20 @@ nav a:hover::after {
     .section, .container {
         width: 100%;
         max-width: 100%;
-        overflow-x: hidden;
-        overflow-y: visible;
+        overflow-x: clip;
         box-sizing: border-box;
     }
 
     .svc-hero, .svc-demo, .svc-features, .svc-process, .svc-cta {
         width: 100%;
         max-width: 100%;
-        overflow-x: hidden;
-        overflow-y: visible;
+        overflow-x: clip;
         box-sizing: border-box;
     }
 
     .about-section .container {
         max-width: 100%;
-        overflow-x: hidden;
-        overflow-y: visible;
+        overflow-x: clip;
         box-sizing: border-box;
         padding: 32px 20px;
     }
@@ -2764,8 +2773,7 @@ nav a:hover::after {
     .dw-wrap, .de-wrap, .ds-wrap {
         max-width: 100%;
         width: 100%;
-        overflow-x: hidden;
-        overflow-y: visible;
+        overflow-x: clip;
     }
 
     /* disable scale() — prevents viewport overflow on tap */
@@ -2807,8 +2815,11 @@ nav a:hover::after {
     .blog-card-img { height: 130px; }
 
     /* ── Footer ── */
+    .site-footer { margin-top: 40px; padding: 40px 20px 32px; }
     .footer-inner { grid-template-columns: 1fr; gap: 28px; }
-    .footer-bottom { flex-direction: column; align-items: flex-start; gap: 10px; }
+    .footer-bottom { flex-direction: column; align-items: center; text-align: center; gap: 10px; }
+    .footer-legal-links { justify-content: center; }
+    .footer-brand p { max-width: 100%; }
 
     /* ── Legal pages ── */
     .legal-header h1 { font-size: 32px; }
