@@ -226,6 +226,27 @@ nav a:hover {
     font-weight: 700;
 }
 
+@media (max-width: 768px) {
+    .trusted-companies {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+        text-align: center;
+        margin-top: 20px;
+    }
+
+    .trusted-companies span {
+        display: block;
+        font-size: 14px;
+        color: #aaa;
+    }
+
+    .trusted-companies .highlight {
+        color: #a855f7;
+        font-weight: 600;
+    }
+}
+
 /* ============================= */
 /* BUTTON */
 /* ============================= */
