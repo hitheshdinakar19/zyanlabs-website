@@ -220,7 +220,7 @@
 
 
     <script>
-        const API = 'http://localhost:5000';
+        const API = window.location.origin;
 
         function formatDate(iso) {
             return new Date(iso).toLocaleDateString('en-US', {

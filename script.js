@@ -268,7 +268,7 @@ document.addEventListener("DOMContentLoaded", function () {
        API BASE URL + SOCKET
     =============================== */
 
-    const API_BASE = "http://localhost:3000";
+    const API_BASE = window.location.origin;
     const socket   = io(API_BASE);
 
     // Persistent client ID — generated once, stored in localStorage,
