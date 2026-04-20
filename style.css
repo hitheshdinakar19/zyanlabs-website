@@ -2633,12 +2633,18 @@ nav a:hover::after {
     html, body { overflow-x: hidden; max-width: 100%; }
 
     /* 3 — anchor links clear the fixed navbar */
-    html { scroll-padding-top: 58px; }
-    .section { scroll-margin-top: 58px; }
-    #services { scroll-margin-top: 58px; }
+    html { scroll-behavior: smooth; scroll-padding-top: 70px; }
+    .section { scroll-margin-top: 70px; }
+    #services { scroll-margin-top: 70px; }
 
     /* ── Nav ── */
-    .hamburger { display: flex; }
+    .hamburger {
+        display: flex;
+        position: fixed;
+        top: 14px;
+        right: 20px;
+        z-index: 1300;
+    }
 
     header {
         padding: 14px 20px;
@@ -2651,61 +2657,51 @@ nav a:hover::after {
         background: rgba(9, 14, 26, 1);
     }
 
-    /* 1 — full-screen fixed overlay (also aliased via #nav-menu) */
+    /* nav hidden by default on mobile */
     header nav,
     #nav-menu {
+        display: none;
+    }
+
+    /* full-screen overlay when open */
+    header nav.nav-open,
+    #nav-menu.nav-open {
         display: flex;
         flex-direction: column;
-        align-items: center;
-        justify-content: center;
+        align-items: stretch;
         position: fixed;
         top: 0;
         left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(9, 14, 26, 1);
-        overflow: hidden;
-        gap: 0;
-        z-index: 990;
-        padding: 68px 0 28px;
-        opacity: 0;
-        visibility: hidden;
-        pointer-events: none;
-        transform: translateY(-10px);
-        transition: opacity 0.28s ease, visibility 0.28s ease, transform 0.28s ease;
+        width: 100%;
+        height: 100%;
+        background: #090e1a;
+        z-index: 1200;
+        padding-top: 68px;
+        overflow-y: auto;
+        overflow-x: hidden;
     }
 
-    header nav.nav-open,
-    #nav-menu.nav-open {
-        opacity: 1;
-        visibility: visible;
-        pointer-events: auto;
-        transform: translateY(0);
-    }
-
-    /* 2 — menu items: centered, spaced, readable */
+    /* all nav links: full-width, stacked, centered */
     header nav a,
     #nav-menu a {
+        display: block;
+        width: 100%;
+        box-sizing: border-box;
+        padding: 20px 24px;
         font-size: 20px;
         font-weight: 600;
-        margin: 0;
-        padding: 20px 0;
-        width: 100%;
         text-align: center;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.07);
-        -webkit-text-fill-color: white !important;
-        color: white !important;
+        color: #ffffff !important;
+        -webkit-text-fill-color: #ffffff !important;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        margin: 0;
+        text-decoration: none;
+        background: transparent;
         transition: background 0.18s ease;
     }
 
-    header nav a:hover,
-    header nav a:active {
-        background: rgba(255, 255, 255, 0.06);
-    }
-
     header nav a:last-child { border-bottom: none; }
-
-    /* hide desktop underline animation inside mobile overlay */
+    header nav a:active { background: rgba(255, 255, 255, 0.06); }
     header nav a::after { display: none !important; }
 
     body.nav-lock { overflow: hidden; }
@@ -2778,15 +2774,34 @@ nav a:hover::after {
     .blog-grid { grid-template-columns: 1fr; }
     .blog-featured-wrap, .blog-grid-wrap { padding-left: 16px; padding-right: 16px; }
 
-    /* ── Demo browser — scroll inside, not page ── */
+    /* ── Overflow / clipping fixes ── */
+    body { overflow-x: hidden; }
+
+    .section,
+    .container {
+        width: 100%;
+        max-width: 100%;
+        overflow-x: hidden;
+        box-sizing: border-box;
+    }
+
+    /* demo browser scrolls internally — page does not */
     .demo-browser {
+        width: 100%;
+        max-width: 100%;
         overflow-x: auto;
+        overflow-y: hidden;
         -webkit-overflow-scrolling: touch;
+        box-sizing: border-box;
     }
 
     .dw-wrap, .de-wrap, .ds-wrap {
         min-width: 640px;
     }
+
+    /* remove scale() — expands card beyond viewport width on mobile */
+    .service-card:hover { transform: translateY(-6px); }
+    .gateway-card:hover { transform: translateY(-6px); }
 
     /* ── Gateway cards ── */
     .gateway-grid { grid-template-columns: 1fr; padding-left: 16px; padding-right: 16px; }
@@ -2826,11 +2841,13 @@ nav a:hover::after {
 
     header { padding: 12px 16px; }
 
-    header nav { padding: 60px 0 20px; }
+    .hamburger { top: 12px; right: 16px; }
+
+    header nav { padding-top: 60px; }
 
     header nav a {
         font-size: 18px;
-        padding: 18px 0;
+        padding: 18px 24px;
     }
 
     .hero h1 { font-size: clamp(24px, 9vw, 34px); }
