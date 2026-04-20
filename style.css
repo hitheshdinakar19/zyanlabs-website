@@ -205,25 +205,36 @@ nav a:hover {
 .logos {
     display: flex;
     justify-content: center;
-    flex-wrap: wrap;
-    gap: 40px;
 }
 
-.logos span {
+.trusted-companies {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 32px;
+    max-width: 900px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.trusted-companies span {
     color: rgba(255, 255, 255, 0.6);
     font-weight: 600;
     font-size: 16px;
-    transition: 0.3s ease;
+    white-space: nowrap;
+    opacity: 0.85;
+    transition: color 0.3s ease;
 }
 
-.logos span:hover {
+.trusted-companies span:hover {
     color: #ffffff;
-    transform: scale(1.05);
+    opacity: 1;
 }
 
-.logos span.highlight {
-    color: #7c5cff;
-    font-weight: 700;
+.trusted-companies .highlight {
+    color: #8b5cf6;
+    font-weight: 600;
+    opacity: 1;
 }
 
 @media (max-width: 768px) {
@@ -233,6 +244,10 @@ nav a:hover {
         padding: 0 16px;
     }
 
+    .logos-title {
+        margin-bottom: 20px;
+    }
+
     .logos {
         gap: 0;
     }
@@ -240,21 +255,19 @@ nav a:hover {
     .trusted-companies {
         width: 100%;
         display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 14px;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 14px 20px;
         text-align: center;
-        margin-top: 20px;
+        margin-top: 0;
     }
 
     .trusted-companies span {
         display: block;
         font-size: 14px;
-        color: #aaa;
+        white-space: normal;
     }
 
     .trusted-companies .highlight {
-        color: #a855f7;
-        font-weight: 600;
         grid-column: 1 / -1;
     }
 }
