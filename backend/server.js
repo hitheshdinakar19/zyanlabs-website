@@ -44,6 +44,8 @@ mongoose
    MIDDLEWARE
 ───────────────────────────── */
 
+app.set('trust proxy', 1);
+
 app.use(cors({ origin: true, credentials: true }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -54,7 +56,8 @@ app.use(session({
     saveUninitialized: false,
     cookie: {
         httpOnly: true,
-        secure:   false,              // set to true when on HTTPS
+        secure:   process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
         maxAge:   24 * 60 * 60 * 1000 // 24 hours
     }
 }));
