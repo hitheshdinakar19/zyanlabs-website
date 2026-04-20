@@ -2637,39 +2637,67 @@ nav a:hover::after {
 
     header {
         padding: 14px 20px;
+        background: rgba(9, 14, 26, 0.98);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
     }
 
+    body.nav-lock header {
+        background: rgba(9, 14, 26, 1);
+    }
+
+    /* Use opacity/visibility so the overlay can animate in/out */
     header nav {
-        display: none;
-        position: fixed;
-        inset: 0;
-        background: rgba(9, 14, 26, 0.97);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
+        display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(9, 14, 26, 0.97);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
         gap: 0;
-        z-index: 1050;
+        z-index: 990;
+        padding-top: 64px;
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+        transform: translateY(-10px);
+        transition: opacity 0.28s ease, visibility 0.28s ease, transform 0.28s ease;
     }
 
-    header nav.nav-open { display: flex; }
+    header nav.nav-open {
+        opacity: 1;
+        visibility: visible;
+        pointer-events: auto;
+        transform: translateY(0);
+    }
 
     header nav a {
-        font-size: 22px;
-        font-weight: 700;
+        font-size: 20px;
+        font-weight: 600;
         margin: 0;
-        padding: 18px 40px;
+        padding: 16px 40px;
         width: 100%;
         text-align: center;
-        border-bottom: 1px solid rgba(255,255,255,0.07);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.07);
         -webkit-text-fill-color: white !important;
         color: white !important;
+        transition: background 0.18s ease;
+    }
+
+    header nav a:hover,
+    header nav a:active {
+        background: rgba(255, 255, 255, 0.06);
     }
 
     header nav a:last-child { border-bottom: none; }
 
-    /* hide underline animation on mobile nav */
+    /* hide desktop underline animation inside mobile overlay */
     header nav a::after { display: none !important; }
 
     body.nav-lock { overflow: hidden; }
@@ -2784,6 +2812,13 @@ nav a:hover::after {
 @media (max-width: 480px) {
 
     header { padding: 12px 16px; }
+
+    header nav { padding-top: 56px; }
+
+    header nav a {
+        font-size: 18px;
+        padding: 14px 24px;
+    }
 
     .hero h1 { font-size: clamp(24px, 9vw, 34px); }
     .hero p  { font-size: 14px; }
