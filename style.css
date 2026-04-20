@@ -2785,6 +2785,37 @@ nav a:hover::after {
         box-sizing: border-box;
     }
 
+    /* service-page containers */
+    .svc-hero,
+    .svc-demo,
+    .svc-features,
+    .svc-process,
+    .svc-cta {
+        width: 100%;
+        max-width: 100%;
+        overflow-x: hidden;
+        box-sizing: border-box;
+    }
+
+    /* about container: reset large desktop padding */
+    .about-section .container {
+        max-width: 100%;
+        overflow-x: hidden;
+        box-sizing: border-box;
+        padding: 32px 20px;
+    }
+
+    /* cards: never exceed viewport */
+    .service-card,
+    .pricing-card,
+    .gateway-card,
+    .feature-item,
+    .blog-card,
+    .blog-featured {
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+
     /* demo browser scrolls internally — page does not */
     .demo-browser {
         width: 100%;
@@ -2797,6 +2828,11 @@ nav a:hover::after {
 
     .dw-wrap, .de-wrap, .ds-wrap {
         min-width: 640px;
+    }
+
+    /* replace 100vw (causes scrollbar bleed) with % on chat widget */
+    .zyan-chat {
+        width: calc(100% - 24px) !important;
     }
 
     /* remove scale() — expands card beyond viewport width on mobile */
