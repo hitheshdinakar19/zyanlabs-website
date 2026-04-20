@@ -190,36 +190,37 @@ io.on('connection', (socket) => {
         console.log(`[admin]  registered  ${socket.id}`);
     });
 
-    socket.on('chat message', async ({ msg }) => {
-        if (!msg || !msg.trim()) return;
-        const clientId = socketToClient.get(socket.id) || socket.id;
-        console.log("Incoming chat data:", { msg, clientId, socketId: socket.id });
+    socket.on('chat message', async (data) => {
+        if (!data.msg || !data.msg.trim()) return;
+        const clientId = data.clientId || socketToClient.get(socket.id) || socket.id;
+        console.log("Incoming chat data:", { msg: data.msg, clientId, socketId: socket.id });
         try {
             await Chat.updateOne(
                 { clientId },
-                { $push: { messages: { sender: 'user', text: msg.trim(), timestamp: new Date() } } },
+                { $push: { messages: { text: data.msg, sender: 'user', timestamp: new Date() } } },
                 { upsert: true }
             );
             console.log("Chat saved for:", clientId);
         } catch (err) { console.error("Chat save error:", err); }
         admins.forEach(adminId => {
             io.to(adminId).emit('user message', {
-                msg: msg.trim(), socketId: socket.id, clientId
+                msg: data.msg.trim(), socketId: socket.id, clientId
             });
         });
     });
 
-    socket.on('admin reply', async ({ msg, socketId }) => {
-        if (!msg || !socketId) return;
-        const clientId = socketToClient.get(socketId) || socketId;
+    socket.on('admin reply', async (data) => {
+        if (!data.msg || !data.socketId) return;
+        const { socketId } = data;
+        const clientId = data.clientId || socketToClient.get(socketId) || socketId;
         try {
             await Chat.updateOne(
                 { clientId },
-                { $push: { messages: { sender: 'admin', text: msg, timestamp: new Date() } } },
+                { $push: { messages: { text: data.msg, sender: 'admin', timestamp: new Date() } } },
                 { upsert: true }
             );
-        } catch (err) { console.error('[save admin reply]', err.message); }
-        io.to(socketId).emit('chat message', { sender: 'admin', msg });
+        } catch (err) { console.error("Chat save error:", err); }
+        io.to(socketId).emit('chat message', { sender: 'admin', msg: data.msg });
     });
 
     socket.on('disconnect', () => {
