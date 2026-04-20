@@ -189,19 +189,19 @@ document.addEventListener("DOMContentLoaded", function () {
        SCROLL FADE-IN
     =============================== */
 
-    function handleFadeIn() {
-        const elements = document.querySelectorAll('.fade-in');
-        elements.forEach(el => {
-            const rect = el.getBoundingClientRect();
-            if (rect.top < window.innerHeight - 50) {
-                el.classList.add('visible');
+    const fadeElements = document.querySelectorAll('.fade-in');
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
             }
         });
-    }
+    }, {
+        threshold: 0.15
+    });
 
-    handleFadeIn();
-    window.addEventListener('scroll', handleFadeIn);
-    window.addEventListener('load', handleFadeIn);
+    fadeElements.forEach(el => observer.observe(el));
 
     /* ===============================
        CONTACT PRODUCT AUTO FILL
