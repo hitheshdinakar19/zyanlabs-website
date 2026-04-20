@@ -189,30 +189,18 @@ document.addEventListener("DOMContentLoaded", function () {
        SCROLL FADE-IN
     =============================== */
 
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('visible');
-                observer.unobserve(entry.target);
-            }
-        });
-    }, {
-        threshold: 0.1,
-        rootMargin: "0px 0px -50px 0px"
-    });
-
-    document.querySelectorAll('.fade-in').forEach(el => {
-        observer.observe(el);
-    });
-
-    window.addEventListener('load', () => {
-        document.querySelectorAll('.fade-in').forEach(el => {
+    function handleFadeIn() {
+        const elements = document.querySelectorAll('.fade-in');
+        elements.forEach(el => {
             const rect = el.getBoundingClientRect();
-            if (rect.top < window.innerHeight) {
+            if (rect.top < window.innerHeight - 50) {
                 el.classList.add('visible');
             }
         });
-    });
+    }
+
+    window.addEventListener('scroll', handleFadeIn);
+    window.addEventListener('load', handleFadeIn);
 
     /* ===============================
        CONTACT PRODUCT AUTO FILL
