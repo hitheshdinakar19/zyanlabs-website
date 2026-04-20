@@ -192,33 +192,31 @@ io.on('connection', (socket) => {
 
     socket.on('chat message', async ({ msg }) => {
         if (!msg || !msg.trim()) return;
-        const clientId = socketToClient.get(socket.id);
-        if (clientId) {
-            try {
-                await Chat.updateOne(
-                    { clientId },
-                    { $push: { messages: { sender: 'user', text: msg.trim() } } }
-                );
-            } catch (err) { console.error('[save user msg]', err.message); }
-        }
+        const clientId = socketToClient.get(socket.id) || socket.id;
+        try {
+            await Chat.updateOne(
+                { clientId },
+                { $push: { messages: { sender: 'user', text: msg.trim(), timestamp: new Date() } } },
+                { upsert: true }
+            );
+        } catch (err) { console.error('[save user msg]', err.message); }
         admins.forEach(adminId => {
             io.to(adminId).emit('user message', {
-                msg: msg.trim(), socketId: socket.id, clientId: clientId || socket.id
+                msg: msg.trim(), socketId: socket.id, clientId
             });
         });
     });
 
     socket.on('admin reply', async ({ msg, socketId }) => {
         if (!msg || !socketId) return;
-        const clientId = socketToClient.get(socketId);
-        if (clientId) {
-            try {
-                await Chat.updateOne(
-                    { clientId },
-                    { $push: { messages: { sender: 'admin', text: msg } } }
-                );
-            } catch (err) { console.error('[save admin reply]', err.message); }
-        }
+        const clientId = socketToClient.get(socketId) || socketId;
+        try {
+            await Chat.updateOne(
+                { clientId },
+                { $push: { messages: { sender: 'admin', text: msg, timestamp: new Date() } } },
+                { upsert: true }
+            );
+        } catch (err) { console.error('[save admin reply]', err.message); }
         io.to(socketId).emit('chat message', { sender: 'admin', msg });
     });
 
