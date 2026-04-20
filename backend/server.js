@@ -193,13 +193,15 @@ io.on('connection', (socket) => {
     socket.on('chat message', async ({ msg }) => {
         if (!msg || !msg.trim()) return;
         const clientId = socketToClient.get(socket.id) || socket.id;
+        console.log("Incoming chat data:", { msg, clientId, socketId: socket.id });
         try {
             await Chat.updateOne(
                 { clientId },
                 { $push: { messages: { sender: 'user', text: msg.trim(), timestamp: new Date() } } },
                 { upsert: true }
             );
-        } catch (err) { console.error('[save user msg]', err.message); }
+            console.log("Chat saved for:", clientId);
+        } catch (err) { console.error("Chat save error:", err); }
         admins.forEach(adminId => {
             io.to(adminId).emit('user message', {
                 msg: msg.trim(), socketId: socket.id, clientId
