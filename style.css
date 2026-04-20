@@ -14,13 +14,15 @@ html {
     font-family: 'Poppins', sans-serif;
 }
 
+html {
+    overflow-x: hidden;
+}
+
 body {
     background: #0f172a;
     color: white;
-    overflow-x: hidden;
+    overflow-x: visible;
     position: relative;
-    -webkit-overflow-scrolling: touch;
-
 }
 
 /* ============================= */
@@ -2619,9 +2621,8 @@ nav a:hover::after {
         background: #090e1a;
         z-index: 1200;
         padding: 80px 20px 20px;
-        overflow-y: auto;
+        overflow-y: hidden;
         overflow-x: hidden;
-        -webkit-overflow-scrolling: touch;
         transform: translateY(-100%);
         opacity: 0;
         pointer-events: none;
@@ -2633,6 +2634,8 @@ nav a:hover::after {
         transform: translateY(0);
         opacity: 1;
         pointer-events: auto;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
     }
 
     header nav a,

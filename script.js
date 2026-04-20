@@ -199,6 +199,7 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
+    handleFadeIn();
     window.addEventListener('scroll', handleFadeIn);
     window.addEventListener('load', handleFadeIn);
 
