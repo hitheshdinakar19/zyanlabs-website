@@ -108,7 +108,7 @@ document.addEventListener("DOMContentLoaded", function () {
             },
 
             interactivity: {
-                detectsOn: "canvas",
+                detectsOn: isMobile ? "canvas" : "window",
                 events: {
                     onHover: {
                         enable: true,
