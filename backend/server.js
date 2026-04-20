@@ -37,7 +37,11 @@ const ADMIN_HASH  =  bcrypt.hashSync(
 
 mongoose
     .connect(process.env.MONGO_URI || 'mongodb://localhost:27017/zyanlabs')
-    .then(() => console.log('  MongoDB connected\n'))
+    .then(() => {
+        console.log('  MongoDB connected');
+        console.log('  DB name:', mongoose.connection.name);
+        console.log('  DB host:', mongoose.connection.host);
+    })
     .catch(err => console.error('[mongo error]', err.message));
 
 /* ─────────────────────────────
@@ -195,12 +199,14 @@ io.on('connection', (socket) => {
         const clientId = data.clientId || socketToClient.get(socket.id) || socket.id;
         console.log("Incoming chat data:", { msg: data.msg, clientId, socketId: socket.id });
         try {
-            await Chat.updateOne(
+            const result = await Chat.updateOne(
                 { clientId },
                 { $push: { messages: { text: data.msg, sender: 'user', timestamp: new Date() } } },
                 { upsert: true }
             );
             console.log("Chat saved for:", clientId);
+            console.log("updateOne result:", JSON.stringify(result));
+            console.log("Writing to DB:", mongoose.connection.name);
         } catch (err) { console.error("Chat save error:", err); }
         admins.forEach(adminId => {
             io.to(adminId).emit('user message', {
