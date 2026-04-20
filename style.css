@@ -2632,6 +2632,11 @@ nav a:hover::after {
     /* prevent horizontal overflow globally */
     html, body { overflow-x: hidden; max-width: 100%; }
 
+    /* 3 — anchor links clear the fixed navbar */
+    html { scroll-padding-top: 58px; }
+    .section { scroll-margin-top: 58px; }
+    #services { scroll-margin-top: 58px; }
+
     /* ── Nav ── */
     .hamburger { display: flex; }
 
@@ -2646,8 +2651,9 @@ nav a:hover::after {
         background: rgba(9, 14, 26, 1);
     }
 
-    /* Use opacity/visibility so the overlay can animate in/out */
-    header nav {
+    /* 1 — full-screen fixed overlay (also aliased via #nav-menu) */
+    header nav,
+    #nav-menu {
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -2657,12 +2663,11 @@ nav a:hover::after {
         left: 0;
         right: 0;
         bottom: 0;
-        background: rgba(9, 14, 26, 0.97);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
+        background: rgba(9, 14, 26, 1);
+        overflow: hidden;
         gap: 0;
         z-index: 990;
-        padding-top: 64px;
+        padding: 68px 0 28px;
         opacity: 0;
         visibility: hidden;
         pointer-events: none;
@@ -2670,18 +2675,21 @@ nav a:hover::after {
         transition: opacity 0.28s ease, visibility 0.28s ease, transform 0.28s ease;
     }
 
-    header nav.nav-open {
+    header nav.nav-open,
+    #nav-menu.nav-open {
         opacity: 1;
         visibility: visible;
         pointer-events: auto;
         transform: translateY(0);
     }
 
-    header nav a {
+    /* 2 — menu items: centered, spaced, readable */
+    header nav a,
+    #nav-menu a {
         font-size: 20px;
         font-weight: 600;
         margin: 0;
-        padding: 16px 40px;
+        padding: 20px 0;
         width: 100%;
         text-align: center;
         border-bottom: 1px solid rgba(255, 255, 255, 0.07);
@@ -2701,6 +2709,11 @@ nav a:hover::after {
     header nav a::after { display: none !important; }
 
     body.nav-lock { overflow: hidden; }
+
+    /* 4 — section spacing and typography */
+    .section { padding: 56px 16px; }
+    p { line-height: 1.75; }
+    .logo { font-size: 18px; }
 
     /* ── Hero ── */
     .hero { padding: 130px 20px 64px; min-height: auto; }
@@ -2813,11 +2826,11 @@ nav a:hover::after {
 
     header { padding: 12px 16px; }
 
-    header nav { padding-top: 56px; }
+    header nav { padding: 60px 0 20px; }
 
     header nav a {
         font-size: 18px;
-        padding: 14px 24px;
+        padding: 18px 0;
     }
 
     .hero h1 { font-size: clamp(24px, 9vw, 34px); }
