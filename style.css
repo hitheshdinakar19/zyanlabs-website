@@ -73,6 +73,7 @@ header {
     align-items: center;
     background: rgba(15, 23, 42, 0.35);
     z-index: 1000;
+    overflow: visible;
     will-change: transform;
     transform: translateZ(0);
 }
@@ -444,11 +445,6 @@ nav a:hover {
     }
 }
 
-@media(max-width: 768px) {
-    .pricing-container {
-        grid-template-columns: 1fr;
-    }
-}
 
 
 /* ============================= */
@@ -505,7 +501,6 @@ nav a:hover {
     -webkit-text-fill-color: transparent;
     background-clip: text;
     filter: drop-shadow(0 0 16px rgba(147, 51, 234, 0.35));
-    white-space: nowrap;
 }
 
 .about-grid {
@@ -1072,18 +1067,6 @@ nav a:hover::after {
     opacity: 0.85;
 }
 
-@media (max-width: 480px) {
-    .zyan-chat {
-        right: 12px;
-        bottom: 84px;
-        width: calc(100vw - 24px);
-    }
-
-    .chat-toggle {
-        right: 16px;
-        bottom: 20px;
-    }
-}
 
 /* Logos section entrance */
 .logos-section.fade-in {
@@ -1192,16 +1175,6 @@ nav a:hover::after {
     color: rgba(255, 255, 255, 0.7);
 }
 
-@media (max-width: 768px) {
-    .footer-inner {
-        grid-template-columns: 1fr;
-        gap: 32px;
-    }
-    .footer-bottom {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-}
 
 /* ─────────────────────────────────────────────────────────────────────────────
    LEGAL PAGES
@@ -1320,11 +1293,6 @@ nav a:hover::after {
     line-height: 1.7;
 }
 
-@media (max-width: 768px) {
-    .legal-header h1 { font-size: 32px; }
-    .legal-wrapper,
-    .legal-container { padding-top: 110px; }
-}
 
 /* ─────────────────────────────────────────────────────────────────────────────
    SERVICES GATEWAY  (services.html)
@@ -1521,7 +1489,8 @@ nav a:hover::after {
     max-width: 960px;
     margin: 0 auto;
     border-radius: 16px;
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: visible;
     border: 1px solid rgba(255,255,255,0.1);
     box-shadow: 0 32px 80px rgba(0,0,0,0.5), 0 0 60px rgba(124,92,255,0.08);
 }
@@ -2126,19 +2095,6 @@ nav a:hover::after {
     .features-grid { grid-template-columns: repeat(2, 1fr); }
 }
 
-@media (max-width: 768px) {
-    .svc-hero h1 { font-size: 34px; }
-    .svc-hero { padding-top: 120px; }
-    .features-grid { grid-template-columns: 1fr; }
-    .process-track { grid-template-columns: 1fr; gap: 32px; }
-    .process-track::before { display: none; }
-    .dw-cards { grid-template-columns: 1fr; }
-    .de-products { grid-template-columns: repeat(2, 1fr); }
-    .ds-sidebar { display: none; }
-    .ds-stats { grid-template-columns: 1fr; }
-    .de-banner { flex-direction: column; gap: 16px; }
-    .dw-nav-links { display: none; }
-}
 
 /* ─────────────────────────────────────────────────────────────────────────────
    BLOG PAGE  (blog.html)
@@ -2583,16 +2539,9 @@ nav a:hover::after {
     margin-right: auto;
 }
 
-@media (max-width: 768px) {
-    .article-title { font-size: 28px; }
-    .article-wrap { padding-top: 110px; }
-    .article-hero-img { height: 180px; font-size: 56px; }
-    .article-cta-box { padding: 32px 24px; }
-    .article-cta-box h2 { font-size: 24px; }
-}
 
 /* ═════════════════════════════════════════════════════════════════════════════
-   MOBILE RESPONSIVENESS  — added global pass
+   MOBILE RESPONSIVENESS — single consolidated block
    Breakpoints: 768px (tablet/phone) · 480px (small phone)
 ═════════════════════════════════════════════════════════════════════════════ */
 
@@ -2629,10 +2578,7 @@ nav a:hover::after {
 /* ── 768 px ───────────────────────────────────────────────────────────────── */
 @media (max-width: 768px) {
 
-    /* prevent horizontal overflow globally */
     html, body { overflow-x: hidden; max-width: 100%; }
-
-    /* 3 — anchor links clear the fixed navbar */
     html { scroll-behavior: smooth; scroll-padding-top: 70px; }
     .section { scroll-margin-top: 70px; }
     #services { scroll-margin-top: 70px; }
@@ -2651,44 +2597,51 @@ nav a:hover::after {
         background: rgba(9, 14, 26, 0.98);
         backdrop-filter: blur(16px);
         -webkit-backdrop-filter: blur(16px);
+        overflow: visible;
     }
 
     body.nav-lock header {
         background: rgba(9, 14, 26, 1);
     }
 
-    /* nav hidden by default on mobile */
+    /* full-screen overlay, hidden by default via transform */
     header nav,
     #nav-menu {
-        display: none;
-    }
-
-    /* full-screen overlay when open */
-    header nav.nav-open,
-    #nav-menu.nav-open {
         display: flex;
         flex-direction: column;
+        justify-content: flex-start;
         align-items: stretch;
         position: fixed;
         top: 0;
         left: 0;
         width: 100%;
-        height: 100%;
+        height: 100vh;
         background: #090e1a;
         z-index: 1200;
-        padding-top: 68px;
+        padding: 80px 20px 20px;
         overflow-y: auto;
         overflow-x: hidden;
+        -webkit-overflow-scrolling: touch;
+        transform: translateY(-100%);
+        opacity: 0;
+        pointer-events: none;
+        transition: transform 0.35s ease, opacity 0.25s ease;
     }
 
-    /* all nav links: full-width, stacked, centered */
+    header nav.nav-open,
+    #nav-menu.nav-open {
+        transform: translateY(0);
+        opacity: 1;
+        pointer-events: auto;
+    }
+
     header nav a,
     #nav-menu a {
         display: block;
         width: 100%;
         box-sizing: border-box;
-        padding: 20px 24px;
-        font-size: 20px;
+        padding: 18px 0;
+        font-size: 18px;
         font-weight: 600;
         text-align: center;
         color: #ffffff !important;
@@ -2706,7 +2659,7 @@ nav a:hover::after {
 
     body.nav-lock { overflow: hidden; }
 
-    /* 4 — section spacing and typography */
+    /* ── Section spacing ── */
     .section { padding: 56px 16px; }
     p { line-height: 1.75; }
     .logo { font-size: 18px; }
@@ -2720,126 +2673,82 @@ nav a:hover::after {
     h1 { font-size: clamp(26px, 7vw, 44px); }
     h2 { font-size: clamp(22px, 5.5vw, 36px); }
 
-    /* ── Section spacing ── */
-    .section { padding: 60px 16px; }
-
-    /* ── Services cards ── */
+    /* ── Grids ── */
     .services-container { grid-template-columns: 1fr; }
-
-    /* ── About grid ── */
     .about-grid { grid-template-columns: 1fr; }
-
-    /* ── Pricing ── */
     .pricing-container { grid-template-columns: 1fr; }
 
-    /* ── Forms — prevent iOS zoom (must be 16px+) ── */
-    input, select, textarea {
-        font-size: 16px !important;
-        width: 100%;
-    }
-
+    /* ── Forms ── */
+    input, select, textarea { font-size: 16px !important; width: 100%; }
     .form-row { flex-direction: column; gap: 0; }
 
-    /* ── Buttons — easier tap target ── */
-    .btn {
-        padding: 13px 26px;
-        font-size: 14px;
-    }
+    /* ── Buttons ── */
+    .btn { padding: 13px 26px; font-size: 14px; }
 
     /* ── Chat widget ── */
     .zyan-chat {
-        width: calc(100vw - 24px) !important;
+        width: calc(100% - 24px) !important;
         right: 12px !important;
         bottom: 80px !important;
         max-width: 360px;
     }
+    .chat-toggle { right: 16px; bottom: 16px; }
 
-    .chat-toggle {
-        right: 16px;
-        bottom: 16px;
-    }
+    /* ── Overflow / clipping ── */
+    html, body { max-width: 100%; overflow-x: hidden; }
 
-    /* ── Blog hero ── */
-    .blog-hero { padding: 120px 16px 52px; }
-    .blog-hero h1 { font-size: clamp(26px, 8vw, 44px); }
-
-    /* ── Blog featured card ── */
-    .blog-featured { grid-template-columns: 1fr; }
-    .blog-featured-img { min-height: 200px; }
-    .blog-featured-body { padding: 28px 24px; }
-    .blog-featured-body h2 { font-size: 22px; }
-    .ai-net-svg { width: 54%; max-width: 200px; }
-
-    /* ── Blog grid ── */
-    .blog-grid { grid-template-columns: 1fr; }
-    .blog-featured-wrap, .blog-grid-wrap { padding-left: 16px; padding-right: 16px; }
-
-    /* ── Overflow / clipping fixes ── */
-    body { overflow-x: hidden; }
-
-    .section,
-    .container {
+    .section, .container {
         width: 100%;
         max-width: 100%;
         overflow-x: hidden;
+        overflow-y: visible;
         box-sizing: border-box;
     }
 
-    /* service-page containers */
-    .svc-hero,
-    .svc-demo,
-    .svc-features,
-    .svc-process,
-    .svc-cta {
+    .svc-hero, .svc-demo, .svc-features, .svc-process, .svc-cta {
         width: 100%;
         max-width: 100%;
         overflow-x: hidden;
+        overflow-y: visible;
         box-sizing: border-box;
     }
 
-    /* about container: reset large desktop padding */
     .about-section .container {
         max-width: 100%;
         overflow-x: hidden;
+        overflow-y: visible;
         box-sizing: border-box;
         padding: 32px 20px;
     }
 
-    /* cards: never exceed viewport */
-    .service-card,
-    .pricing-card,
-    .gateway-card,
-    .feature-item,
-    .blog-card,
-    .blog-featured {
+    .service-card, .pricing-card, .gateway-card,
+    .feature-item, .blog-card, .blog-featured {
         max-width: 100%;
         box-sizing: border-box;
     }
 
-    /* demo browser scrolls internally — page does not */
+    /* demo browser: scrolls horizontally, never clips vertically */
     .demo-browser {
         width: 100%;
         max-width: 100%;
         overflow-x: auto;
-        overflow-y: hidden;
+        overflow-y: visible;
         -webkit-overflow-scrolling: touch;
         box-sizing: border-box;
     }
 
     .dw-wrap, .de-wrap, .ds-wrap {
-        min-width: 640px;
+        max-width: 100%;
+        width: 100%;
+        overflow-x: hidden;
+        overflow-y: visible;
     }
 
-    /* replace 100vw (causes scrollbar bleed) with % on chat widget */
-    .zyan-chat {
-        width: calc(100% - 24px) !important;
-    }
+    /* disable scale() — prevents viewport overflow on tap */
+    .service-card:hover { transform: none; }
+    .gateway-card:hover { transform: none; }
 
-    /* remove scale() — expands card beyond viewport width on mobile */
-    .service-card:hover { transform: translateY(-6px); }
-    .gateway-card:hover { transform: translateY(-6px); }
-
-    /* ── Gateway cards ── */
+    /* ── Gateway ── */
     .gateway-grid { grid-template-columns: 1fr; padding-left: 16px; padding-right: 16px; }
     .gateway-hero { padding: 120px 16px 52px; }
     .gateway-hero h1 { font-size: clamp(26px, 8vw, 44px); }
@@ -2848,71 +2757,75 @@ nav a:hover::after {
     .svc-hero { padding: 120px 16px 72px; }
     .svc-hero h1 { font-size: clamp(26px, 8vw, 44px); }
     .svc-demo { padding-left: 16px; padding-right: 16px; }
-
     .features-grid { grid-template-columns: 1fr; }
-
     .process-track { grid-template-columns: 1fr; gap: 32px; }
     .process-track::before { display: none; }
-
     .svc-cta h2 { font-size: 28px; }
+
+    /* ── Demo UI elements ── */
+    .dw-cards { grid-template-columns: 1fr; }
+    .dw-nav-links { display: none; }
+    .de-products { grid-template-columns: repeat(2, 1fr); }
+    .de-banner { flex-direction: column; gap: 16px; }
+    .ds-sidebar { display: none; }
+    .ds-stats { grid-template-columns: 1fr; }
+
+    /* ── Blog ── */
+    .blog-hero { padding: 120px 16px 52px; }
+    .blog-hero h1 { font-size: clamp(26px, 8vw, 44px); }
+    .blog-featured { grid-template-columns: 1fr; }
+    .blog-featured-img { min-height: 200px; }
+    .blog-featured-body { padding: 28px 24px; }
+    .blog-featured-body h2 { font-size: 22px; }
+    .ai-net-svg { width: 54%; max-width: 200px; }
+    .blog-grid { grid-template-columns: 1fr; }
+    .blog-featured-wrap, .blog-grid-wrap { padding-left: 16px; padding-right: 16px; }
+    .blog-card-img { height: 130px; }
 
     /* ── Footer ── */
     .footer-inner { grid-template-columns: 1fr; gap: 28px; }
     .footer-bottom { flex-direction: column; align-items: flex-start; gap: 10px; }
 
-    /* ── Legal / article pages ── */
+    /* ── Legal pages ── */
+    .legal-header h1 { font-size: 32px; }
     .legal-container, .legal-wrapper { padding: 110px 16px 72px; }
+
+    /* ── Article pages ── */
     .article-wrap { padding: 110px 16px 72px; }
     .article-title { font-size: clamp(22px, 6vw, 36px); }
     .article-excerpt { font-size: 15px; }
     .article-body { font-size: 15px; }
     .article-hero-img { height: 160px; font-size: 52px; }
-
-    /* ── Blog cards ── */
-    .blog-card-img { height: 130px; }
+    .article-cta-box { padding: 32px 24px; }
+    .article-cta-box h2 { font-size: 24px; }
 }
 
 /* ── 480 px (small phones) ────────────────────────────────────────────────── */
 @media (max-width: 480px) {
 
     header { padding: 12px 16px; }
-
     .hamburger { top: 12px; right: 16px; }
-
     header nav { padding-top: 60px; }
-
-    header nav a {
-        font-size: 18px;
-        padding: 18px 24px;
-    }
+    header nav a { font-size: 18px; padding: 18px 24px; }
 
     .hero h1 { font-size: clamp(24px, 9vw, 34px); }
     .hero p  { font-size: 14px; }
 
     .section { padding: 48px 14px; }
-
     .service-card { padding: 24px 20px; }
 
     .btn { width: 100%; text-align: center; }
-
-    /* keep CTA buttons inline where they sit inside flex/inline contexts */
-    .gateway-arrow,
-    .blog-read-more,
-    .article-back,
-    .legal-back { width: auto; }
+    .gateway-arrow, .blog-read-more, .article-back, .legal-back { width: auto; }
 
     .svc-hero h1 { font-size: clamp(22px, 9vw, 32px); }
     .svc-cta h2  { font-size: 24px; }
-
     .article-cta-box { padding: 28px 18px; }
 
     .footer-inner { padding: 0 4px; }
 
     .blog-hero h1 { font-size: clamp(22px, 9vw, 32px); }
-
     .gateway-card { padding: 28px 20px; }
 
-    /* demo: still scrollable but tighter */
     .demo-bar { padding: 10px 12px; }
     .demo-url { display: none; }
 }
