@@ -72,7 +72,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
             particles: {
                 number: {
-                    value: isMobile ? 25 : 90,
+                    value: isMobile ? 35 : 90,
                     density: { enable: true, area: 1000 }
                 },
 
@@ -89,44 +89,54 @@ document.addEventListener("DOMContentLoaded", function () {
                 },
 
                 links: {
-                    enable: !isMobile,
-                    distance: 150,
+                    enable: true,
+                    distance: isMobile ? 100 : 150,
                     color: "#6366f1",
-                    opacity: 0.55,
-                    width: 1.5
+                    opacity: isMobile ? 0.3 : 0.55,
+                    width: isMobile ? 1 : 1.5
                 },
 
                 move: {
                     enable: true,
-                    speed: isMobile ? 0.6 : 1.2,
+                    speed: isMobile ? 0.5 : 1.2,
                     direction: "none",
                     random: false,
                     straight: false,
-                    outModes: { default: "bounce" }
+                    outModes: { default: "bounce" },
+                    warp: false
                 }
             },
 
             interactivity: {
+                detectsOn: "canvas",
                 events: {
                     onHover: {
-                        enable: !isMobile,
+                        enable: true,
                         mode: ["grab", "attract"]
                     },
                     onClick: {
-                        enable: false
+                        enable: isMobile,
+                        mode: "repulse"
                     }
                 },
 
                 modes: {
                     grab: {
-                        distance: 180,
-                        links: { opacity: 0.7 }
+                        distance: isMobile ? 120 : 180,
+                        links: { opacity: isMobile ? 0.45 : 0.7 }
                     },
 
                     attract: {
-                        distance: 220,
-                        duration: 0.4,
-                        speed: 2
+                        distance: isMobile ? 140 : 220,
+                        duration: isMobile ? 0.6 : 0.4,
+                        speed: isMobile ? 1 : 2
+                    },
+
+                    repulse: {
+                        distance: 130,
+                        duration: 0.6,
+                        speed: 0.8,
+                        factor: 80
                     }
                 }
             }
