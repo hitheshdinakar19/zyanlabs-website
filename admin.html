@@ -451,6 +451,9 @@
         .details-table tr:last-child td { border-bottom: none; }
         .details-table tr:hover td { background: rgba(255, 255, 255, 0.03); }
 
+        .details-row { cursor: pointer; }
+        .details-row:hover td { background: rgba(124, 92, 255, 0.08) !important; }
+
         .details-empty {
             font-size: 12px;
             color: rgba(255, 255, 255, 0.25);
@@ -819,14 +822,14 @@
                     return;
                 }
                 const rows = data.map(u => `
-                    <tr>
+                    <tr class="details-row" data-cid="${u.clientId}" onclick="loadChat(this.dataset.cid)">
                         <td>${escapeHtml(u.email || u.clientId)}</td>
                         <td>${escapeHtml(u.name || '—')}</td>
                         <td>${new Date(u.joinedAt).toLocaleString()}</td>
                     </tr>`).join('');
                 renderDetails(`
                     <table class="details-table">
-                        <thead><tr><th>Email</th><th>Name</th><th>Joined At</th></tr></thead>
+                        <thead><tr><th>Email</th><th>Name</th><th>Joined At</th><th></th></tr></thead>
                         <tbody>${rows}</tbody>
                     </table>`, 'Users', 'cardUsers');
             } catch (_) {}
@@ -841,7 +844,7 @@
                     return;
                 }
                 const rows = data.map(c => `
-                    <tr>
+                    <tr class="details-row" data-cid="${c.clientId}" onclick="loadChat(this.dataset.cid)">
                         <td>${escapeHtml(c.email || c.clientId)}</td>
                         <td>${escapeHtml(c.name || '—')}</td>
                         <td>${c.messageCount}</td>
@@ -876,6 +879,59 @@
                         <tbody>${rows}</tbody>
                     </table>`, 'Messages Today', 'cardToday');
             } catch (_) {}
+        }
+
+        /* ── Load full chat by clientId (API-backed) ─────── */
+
+        async function loadChat(clientId) {
+            try {
+                const res = await fetch(`/api/chat/${encodeURIComponent(clientId)}`, { credentials: 'include' });
+                if (!res.ok) return;
+                const chat = await res.json();
+                renderChat(chat);
+            } catch (_) {}
+        }
+
+        function renderChat(chat) {
+            const clientId = chat.clientId;
+            window.activeClientId = clientId;
+            selectedUser = clientId;
+
+            // Seed conversations map with DB data if not already present
+            if (!conversations.has(clientId)) {
+                conversations.set(clientId, {
+                    messages: chat.messages.map(m => ({ from: m.sender, msg: m.text, time: new Date(m.timestamp) })),
+                    unread:   0,
+                    socketId: null,
+                    email:    chat.email || '',
+                    name:     chat.name  || ''
+                });
+            } else {
+                const convo = conversations.get(clientId);
+                if (chat.email && !convo.email) convo.email = chat.email;
+                if (chat.name  && !convo.name)  convo.name  = chat.name;
+            }
+
+            const convo = conversations.get(clientId);
+            convo.unread = 0;
+
+            // Panel header
+            const displayName = chat.name || chat.email || `…${clientId.slice(-10)}`;
+            document.getElementById("panelHeader").innerHTML =
+                `Replying to <strong title="${clientId}">${escapeHtml(displayName)}</strong>`;
+
+            // Render all messages into feed
+            const feed = document.getElementById("feed");
+            feed.innerHTML = "";
+            chat.messages.forEach(m => renderBubble(m.sender, m.text));
+
+            // Enable reply only if user has a live socket connection
+            const isOnline = !!convo.socketId;
+            document.getElementById("adminInput").disabled = !isOnline;
+            document.getElementById("sendBtn").disabled    = !isOnline;
+            if (isOnline) document.getElementById("adminInput").focus();
+
+            renderSidebar();
         }
 
         /* ── Dashboard ────────────────────────────────────── */
