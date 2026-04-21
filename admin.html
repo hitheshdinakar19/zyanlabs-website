@@ -867,7 +867,7 @@
                     return;
                 }
                 const rows = data.map(m => `
-                    <tr>
+                    <tr class="details-row" data-cid="${m.clientId}" onclick="loadChat(this.dataset.cid)">
                         <td>${escapeHtml(m.email || m.clientId)}</td>
                         <td><span class="sender-badge ${m.sender}">${m.sender}</span></td>
                         <td>${escapeHtml(m.text)}</td>
