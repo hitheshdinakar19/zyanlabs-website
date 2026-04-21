@@ -294,6 +294,16 @@
             <span>ZyanLabs Chat</span>
             <button class="chat-close" id="closeChat" aria-label="Close chat">&#x2715;</button>
         </div>
+
+        <!-- USER INFO MODAL — shown before first message if email not saved -->
+        <div class="chat-info-modal" id="userInfoModal">
+            <p class="chat-info-title">Start a conversation</p>
+            <p class="chat-info-sub">We'll get back to you as soon as possible.</p>
+            <input id="userEmail" type="email" placeholder="Your email (required)" autocomplete="email">
+            <input id="userName" type="text" placeholder="Your name (optional)" autocomplete="name">
+            <button class="chat-info-btn" onclick="saveUserInfo()">Start Chat</button>
+        </div>
+
         <div class="chat-body" id="chatBody"></div>
         <div class="chat-input-row">
             <input type="text" id="userInput" placeholder="Type a message…" autocomplete="off">

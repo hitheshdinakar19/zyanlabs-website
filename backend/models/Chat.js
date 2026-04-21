@@ -14,6 +14,8 @@ const messageSchema = new mongoose.Schema(
 const chatSchema = new mongoose.Schema(
     {
         clientId: { type: String, required: true, unique: true, index: true },
+        email:    { type: String, default: '' },
+        name:     { type: String, default: '' },
         messages: [messageSchema]
     },
     { timestamps: true }   // adds createdAt / updatedAt

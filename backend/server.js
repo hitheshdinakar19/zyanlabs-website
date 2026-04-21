@@ -188,19 +188,26 @@ const WELCOME = "Hi 👋 Welcome to ZyanLabs! How can we help you today?";
 io.on('connection', (socket) => {
     console.log(`[socket] connected   ${socket.id}`);
 
-    socket.on('join', async ({ clientId }) => {
+    socket.on('join', async ({ clientId, email, name }) => {
         if (!clientId) return;
         socketToClient.set(socket.id, clientId);
-        console.log(`[join]   ${socket.id}  clientId=${clientId}`);
+        console.log(`[join]   ${socket.id}  clientId=${clientId}  email=${email || '—'}`);
         try {
             let chat = await Chat.findOne({ clientId });
             if (!chat) {
-                chat = await Chat.create({
+                chat = new Chat({
                     clientId,
+                    email: email || '',
+                    name:  name  || '',
                     messages: [{ sender: 'admin', text: WELCOME }]
                 });
+                await chat.save();
                 socket.emit('chat history', { messages: chat.messages });
             } else {
+                // Update email / name if not already stored
+                if (!chat.email && email) chat.email = email;
+                if (!chat.name  && name)  chat.name  = name;
+                await chat.save();
                 socket.emit('chat history', { messages: chat.messages });
                 admins.forEach(adminId => {
                     io.to(adminId).emit('user rejoined', {

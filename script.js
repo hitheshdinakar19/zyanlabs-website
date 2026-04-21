@@ -283,8 +283,32 @@ document.addEventListener("DOMContentLoaded", function () {
     }
     const clientId = getClientId();
 
-    // Tell the server our identity on every (re)connect
-    socket.on("connect", () => socket.emit("join", { clientId }));
+    // Tell the server our identity on every (re)connect — only if email is already saved
+    socket.on("connect", () => {
+        if (localStorage.getItem('chatEmail')) initChat();
+    });
+
+    function initChat() {
+        socket.emit("join", {
+            clientId,
+            email: localStorage.getItem('chatEmail') || '',
+            name:  localStorage.getItem('chatName')  || ''
+        });
+    }
+
+    window.saveUserInfo = function () {
+        const email = document.getElementById('userEmail').value.trim();
+        const name  = document.getElementById('userName').value.trim();
+        if (!email) {
+            alert('Email is required to start chatting.');
+            return;
+        }
+        localStorage.setItem('chatEmail', email);
+        localStorage.setItem('chatName',  name);
+        document.getElementById('userInfoModal').classList.remove('visible');
+        initChat();
+        document.getElementById('userInput')?.focus();
+    };
 
     /* ===============================
        CONTACT FORM — API SUBMIT
@@ -404,7 +428,13 @@ document.addEventListener("DOMContentLoaded", function () {
         openChatBtn.addEventListener("click", () => {
             chatWidget.classList.toggle("open");
             if (chatWidget.classList.contains("open")) {
-                document.getElementById("userInput")?.focus();
+                if (!localStorage.getItem('chatEmail')) {
+                    document.getElementById('userInfoModal').classList.add('visible');
+                    document.getElementById('userEmail')?.focus();
+                } else {
+                    document.getElementById('userInfoModal').classList.remove('visible');
+                    document.getElementById("userInput")?.focus();
+                }
             }
         });
 
@@ -414,6 +444,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
         // Send message via socket — NO auto-reply (admin handles it)
         window.sendMessage = function () {
+            if (!localStorage.getItem('chatEmail')) {
+                document.getElementById('userInfoModal').classList.add('visible');
+                document.getElementById('userEmail')?.focus();
+                return;
+            }
             const input   = document.getElementById("userInput");
             const message = input.value.trim();
             if (!message) return;
