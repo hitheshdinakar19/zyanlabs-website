@@ -264,6 +264,55 @@ io.on('connection', (socket) => {
    DASHBOARD API
 ───────────────────────────── */
 
+// GET /api/users — list of all unique users with their first-seen date
+app.get('/api/users', requireSession, async (req, res) => {
+    try {
+        const users = await Chat.find({}, 'clientId createdAt').sort({ createdAt: -1 }).lean();
+        res.json(users.map(u => ({ clientId: u.clientId, joinedAt: u.createdAt })));
+    } catch (err) {
+        console.error('[api/users error]', err.message);
+        res.status(500).json({ error: 'Failed to load users.' });
+    }
+});
+
+// GET /api/chats — all chat sessions with message count and last activity
+app.get('/api/chats', requireSession, async (req, res) => {
+    try {
+        const chats = await Chat.find({}, 'clientId messages updatedAt').sort({ updatedAt: -1 }).lean();
+        res.json(chats.map(c => ({
+            clientId:     c.clientId,
+            messageCount: c.messages.length,
+            lastActivity: c.updatedAt
+        })));
+    } catch (err) {
+        console.error('[api/chats error]', err.message);
+        res.status(500).json({ error: 'Failed to load chats.' });
+    }
+});
+
+// GET /api/messages-today — all messages sent today across all chats
+app.get('/api/messages-today', requireSession, async (req, res) => {
+    try {
+        const startOfDay = new Date();
+        startOfDay.setHours(0, 0, 0, 0);
+        const results = await Chat.aggregate([
+            { $unwind: '$messages' },
+            { $match: { 'messages.timestamp': { $gte: startOfDay } } },
+            { $project: {
+                _id:       0,
+                clientId:  1,
+                sender:    '$messages.sender',
+                text:      '$messages.text',
+                timestamp: '$messages.timestamp'
+            }}
+        ]);
+        res.json(results);
+    } catch (err) {
+        console.error('[api/messages-today error]', err.message);
+        res.status(500).json({ error: 'Failed to load today\'s messages.' });
+    }
+});
+
 app.get('/api/dashboard', requireSession, async (req, res) => {
     try {
         const totalUsers = await Chat.countDocuments();

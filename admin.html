@@ -362,6 +362,113 @@
             opacity: 0.6;
         }
 
+        /* ── Dashboard card clickable state ──────────────── */
+        .dash-card {
+            cursor: pointer;
+        }
+
+        .dash-card.active {
+            border-color: rgba(124, 92, 255, 0.55);
+            background: rgba(124, 92, 255, 0.08);
+        }
+
+        /* ── Dashboard detail panel ──────────────────────── */
+        .dashboard-details {
+            margin: 0 20px 12px;
+            background: rgba(15, 23, 42, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 10px;
+            padding: 16px 18px;
+            max-height: 220px;
+            overflow-y: auto;
+            flex-shrink: 0;
+            display: none;
+        }
+
+        .dashboard-details.visible {
+            display: block;
+        }
+
+        .dashboard-details::-webkit-scrollbar { width: 3px; }
+        .dashboard-details::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+        }
+
+        .details-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .details-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.55);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .details-close {
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 16px;
+            cursor: pointer;
+            line-height: 1;
+            padding: 0;
+            transition: color 0.15s;
+        }
+
+        .details-close:hover { color: rgba(255, 255, 255, 0.7); }
+
+        .details-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+
+        .details-table th {
+            text-align: left;
+            padding: 6px 10px;
+            color: rgba(255, 255, 255, 0.35);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            font-size: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .details-table td {
+            padding: 8px 10px;
+            color: rgba(255, 255, 255, 0.75);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            font-family: monospace;
+            font-size: 11px;
+        }
+
+        .details-table tr:last-child td { border-bottom: none; }
+        .details-table tr:hover td { background: rgba(255, 255, 255, 0.03); }
+
+        .details-empty {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.25);
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        .sender-badge {
+            display: inline-block;
+            padding: 2px 7px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 600;
+        }
+
+        .sender-badge.user  { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.6); }
+        .sender-badge.admin { background: rgba(124,92,255,0.2);   color: #a78bfa; }
+
     </style>
 </head>
 
@@ -381,19 +488,22 @@
 
     <!-- DASHBOARD STRIP -->
     <div class="dashboard-strip">
-        <div class="dash-card">
+        <div class="dash-card" id="cardUsers" onclick="loadUsers()">
             <div class="dash-label">Total Users</div>
             <div class="dash-value" id="dashUsers">—</div>
         </div>
-        <div class="dash-card">
+        <div class="dash-card" id="cardChats" onclick="loadChats()">
             <div class="dash-label">Total Chats</div>
             <div class="dash-value" id="dashChats">—</div>
         </div>
-        <div class="dash-card">
+        <div class="dash-card" id="cardToday" onclick="loadTodayMessages()">
             <div class="dash-label">Messages Today</div>
             <div class="dash-value" id="dashToday">—</div>
         </div>
     </div>
+
+    <!-- DASHBOARD DETAIL PANEL -->
+    <div id="dashboardDetails" class="dashboard-details"></div>
 
     <!-- LAYOUT -->
     <div class="layout">
@@ -663,6 +773,98 @@
         async function logout() {
             await fetch('/api/logout', { method: 'POST', credentials: 'include' });
             window.location.replace('/login.html');
+        }
+
+        /* ── Dashboard detail panel ───────────────────────── */
+
+        const CARDS = ['cardUsers', 'cardChats', 'cardToday'];
+
+        function setActiveCard(id) {
+            CARDS.forEach(c => document.getElementById(c).classList.remove('active'));
+            if (id) document.getElementById(id).classList.add('active');
+        }
+
+        function renderDetails(html, title, cardId) {
+            setActiveCard(cardId);
+            const panel = document.getElementById('dashboardDetails');
+            panel.innerHTML = `
+                <div class="details-header">
+                    <span class="details-title">${title}</span>
+                    <button class="details-close" onclick="closeDetails()" title="Close">✕</button>
+                </div>
+                ${html}`;
+            panel.classList.add('visible');
+        }
+
+        function closeDetails() {
+            document.getElementById('dashboardDetails').classList.remove('visible');
+            setActiveCard(null);
+        }
+
+        async function loadUsers() {
+            try {
+                const res  = await fetch('/api/users', { credentials: 'include' });
+                const data = await res.json();
+                if (!data.length) {
+                    renderDetails('<div class="details-empty">No users yet.</div>', 'Users', 'cardUsers');
+                    return;
+                }
+                const rows = data.map(u => `
+                    <tr>
+                        <td>…${u.clientId.slice(-14)}</td>
+                        <td>${new Date(u.joinedAt).toLocaleString()}</td>
+                    </tr>`).join('');
+                renderDetails(`
+                    <table class="details-table">
+                        <thead><tr><th>Client ID</th><th>Joined At</th></tr></thead>
+                        <tbody>${rows}</tbody>
+                    </table>`, 'Users', 'cardUsers');
+            } catch (_) {}
+        }
+
+        async function loadChats() {
+            try {
+                const res  = await fetch('/api/chats', { credentials: 'include' });
+                const data = await res.json();
+                if (!data.length) {
+                    renderDetails('<div class="details-empty">No chats yet.</div>', 'Chats', 'cardChats');
+                    return;
+                }
+                const rows = data.map(c => `
+                    <tr>
+                        <td>…${c.clientId.slice(-14)}</td>
+                        <td>${c.messageCount}</td>
+                        <td>${new Date(c.lastActivity).toLocaleString()}</td>
+                    </tr>`).join('');
+                renderDetails(`
+                    <table class="details-table">
+                        <thead><tr><th>Client ID</th><th>Messages</th><th>Last Active</th></tr></thead>
+                        <tbody>${rows}</tbody>
+                    </table>`, 'Chats', 'cardChats');
+            } catch (_) {}
+        }
+
+        async function loadTodayMessages() {
+            try {
+                const res  = await fetch('/api/messages-today', { credentials: 'include' });
+                const data = await res.json();
+                if (!data.length) {
+                    renderDetails('<div class="details-empty">No messages today.</div>', 'Messages Today', 'cardToday');
+                    return;
+                }
+                const rows = data.map(m => `
+                    <tr>
+                        <td>…${m.clientId.slice(-14)}</td>
+                        <td><span class="sender-badge ${m.sender}">${m.sender}</span></td>
+                        <td>${escapeHtml(m.text)}</td>
+                        <td>${new Date(m.timestamp).toLocaleTimeString()}</td>
+                    </tr>`).join('');
+                renderDetails(`
+                    <table class="details-table">
+                        <thead><tr><th>Client ID</th><th>Sender</th><th>Message</th><th>Time</th></tr></thead>
+                        <tbody>${rows}</tbody>
+                    </table>`, 'Messages Today', 'cardToday');
+            } catch (_) {}
         }
 
         /* ── Dashboard ────────────────────────────────────── */
