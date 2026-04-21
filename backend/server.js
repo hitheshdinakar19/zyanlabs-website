@@ -71,7 +71,7 @@ app.use(session({
 ───────────────────────────── */
 
 function requireSession(req, res, next) {
-    if (req.session && req.session.isAdmin) return next();
+    if (req.session && req.session.adminId) return next();
     res.redirect('/login.html');
 }
 
@@ -116,14 +116,14 @@ app.post('/api/login', async (req, res) => {
             console.error('[session error]', err.message);
             return res.status(500).json({ success: false, error: 'Server error.' });
         }
-        req.session.isAdmin = true;
+        req.session.adminId = ADMIN_EMAIL;
         res.json({ success: true });
     });
 });
 
 // GET /api/check-auth
 app.get('/api/check-auth', (req, res) => {
-    if (req.session && req.session.isAdmin) {
+    if (req.session && req.session.adminId) {
         return res.json({ loggedIn: true });
     }
     res.status(401).json({ loggedIn: false });
