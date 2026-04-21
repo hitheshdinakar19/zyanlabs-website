@@ -261,6 +261,36 @@ io.on('connection', (socket) => {
 });
 
 /* ─────────────────────────────
+   DASHBOARD API
+───────────────────────────── */
+
+app.get('/api/dashboard', requireSession, async (req, res) => {
+    try {
+        const totalUsers = await Chat.countDocuments();
+
+        const msgAgg = await Chat.aggregate([
+            { $project: { count: { $size: '$messages' } } },
+            { $group: { _id: null, total: { $sum: '$count' } } }
+        ]);
+        const totalChats = msgAgg[0]?.total ?? 0;
+
+        const startOfDay = new Date();
+        startOfDay.setHours(0, 0, 0, 0);
+        const todayAgg = await Chat.aggregate([
+            { $unwind: '$messages' },
+            { $match: { 'messages.timestamp': { $gte: startOfDay } } },
+            { $count: 'count' }
+        ]);
+        const messagesToday = todayAgg[0]?.count ?? 0;
+
+        res.json({ totalUsers, totalChats, messagesToday });
+    } catch (err) {
+        console.error('[dashboard error]', err.message);
+        res.status(500).json({ error: 'Failed to load dashboard data.' });
+    }
+});
+
+/* ─────────────────────────────
    BLOG ROUTES
 ───────────────────────────── */
 

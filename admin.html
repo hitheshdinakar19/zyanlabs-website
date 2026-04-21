@@ -314,6 +314,54 @@
             border-color: rgba(239,68,68,0.5);
         }
 
+        /* ── Dashboard strip ─────────────────────────── */
+        .dashboard-strip {
+            display: flex;
+            gap: 14px;
+            padding: 14px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+            flex-shrink: 0;
+            background: rgba(15, 23, 42, 0.5);
+        }
+
+        .dash-card {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 10px;
+            padding: 12px 16px;
+            transition: border-color 0.2s, background 0.2s;
+        }
+
+        .dash-card:hover {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(124, 92, 255, 0.35);
+        }
+
+        .dash-label {
+            font-size: 10px;
+            color: rgba(255, 255, 255, 0.38);
+            text-transform: uppercase;
+            letter-spacing: 1.1px;
+            margin-bottom: 6px;
+        }
+
+        .dash-value {
+            font-size: 26px;
+            font-weight: 700;
+            background: linear-gradient(90deg, #5aa9ff, #7c5cff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1;
+        }
+
+        .dash-icon {
+            font-size: 18px;
+            margin-bottom: 6px;
+            opacity: 0.6;
+        }
+
     </style>
 </head>
 
@@ -330,6 +378,22 @@
             <button class="btn-header btn-logout" onclick="logout()">Log Out</button>
         </div>
     </header>
+
+    <!-- DASHBOARD STRIP -->
+    <div class="dashboard-strip">
+        <div class="dash-card">
+            <div class="dash-label">Total Users</div>
+            <div class="dash-value" id="dashUsers">—</div>
+        </div>
+        <div class="dash-card">
+            <div class="dash-label">Total Chats</div>
+            <div class="dash-value" id="dashChats">—</div>
+        </div>
+        <div class="dash-card">
+            <div class="dash-label">Messages Today</div>
+            <div class="dash-value" id="dashToday">—</div>
+        </div>
+    </div>
 
     <!-- LAYOUT -->
     <div class="layout">
@@ -600,6 +664,19 @@
             await fetch('/api/logout', { method: 'POST', credentials: 'include' });
             window.location.replace('/login.html');
         }
+
+        /* ── Dashboard ────────────────────────────────────── */
+        async function loadDashboard() {
+            try {
+                const res = await fetch('/api/dashboard', { credentials: 'include' });
+                if (!res.ok) return;
+                const { totalUsers, totalChats, messagesToday } = await res.json();
+                document.getElementById('dashUsers').textContent = totalUsers;
+                document.getElementById('dashChats').textContent = totalChats;
+                document.getElementById('dashToday').textContent = messagesToday;
+            } catch (_) {}
+        }
+        loadDashboard();
     </script>
 
 </body>
