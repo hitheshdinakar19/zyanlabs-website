@@ -10,6 +10,7 @@ const path       = require('path');
 const { Server } = require('socket.io');
 const mongoose   = require('mongoose');
 const Chat       = require('./models/Chat');
+const Admin      = require('./models/Admin');
 const blogRoutes = require('./routes/blogs');
 
 const app    = express();
@@ -103,15 +104,18 @@ app.post('/api/login', async (req, res) => {
         return res.status(400).json({ success: false, error: 'Email and password are required.' });
     }
 
-    console.log("Email entered:", email);
-    console.log("User from DB:", null); // no DB lookup — admin credentials are hardcoded
-    console.log("Stored hash:", ADMIN_HASH);
+    console.log("Searching for:", email);
+    const user = await Admin.findOne({ email: email.toLowerCase().trim() });
+    console.log("User found:", user);
 
-    const emailMatch    = email.toLowerCase().trim() === ADMIN_EMAIL;
-    const passwordMatch = emailMatch && await bcrypt.compare(password, ADMIN_HASH);
-    console.log("Password match:", passwordMatch);
+    if (!user) {
+        return res.status(401).json({ success: false, error: 'Invalid credentials.' });
+    }
 
-    if (!emailMatch || !passwordMatch) {
+    const isMatch = await bcrypt.compare(password, user.password);
+    console.log("Password match:", isMatch);
+
+    if (!isMatch) {
         return res.status(401).json({ success: false, error: 'Invalid credentials.' });
     }
 
@@ -121,7 +125,7 @@ app.post('/api/login', async (req, res) => {
             console.error('[session error]', err.message);
             return res.status(500).json({ success: false, error: 'Server error.' });
         }
-        req.session.adminId = ADMIN_EMAIL;
+        req.session.adminId = user.email;
         res.json({ success: true });
     });
 });
