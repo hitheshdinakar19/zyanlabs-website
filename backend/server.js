@@ -36,8 +36,10 @@ const ADMIN_HASH  =  bcrypt.hashSync(
    MONGODB CONNECTION
 ───────────────────────────── */
 
+console.log("Using Mongo URI:", process.env.MONGO_URI);
+
 mongoose
-    .connect(process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/zyanlabs')
+    .connect(process.env.MONGO_URI)
     .then(() => {
         console.log('  MongoDB connected');
         console.log('  DB name:', mongoose.connection.name);
