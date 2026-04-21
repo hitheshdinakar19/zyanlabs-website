@@ -277,6 +277,18 @@ io.on('connection', (socket) => {
    DASHBOARD API
 ───────────────────────────── */
 
+// GET /api/chat/:clientId — full chat document for a given clientId
+app.get('/api/chat/:clientId', requireSession, async (req, res) => {
+    try {
+        const chat = await Chat.findOne({ clientId: req.params.clientId });
+        if (!chat) return res.status(404).json({ error: 'Chat not found' });
+        res.json(chat);
+    } catch (err) {
+        console.error('[api/chat error]', err.message);
+        res.status(500).json({ error: 'Failed to fetch chat.' });
+    }
+});
+
 // GET /api/users — list of all unique users with their first-seen date
 app.get('/api/users', requireSession, async (req, res) => {
     try {
