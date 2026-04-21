@@ -617,16 +617,18 @@
 
         /* ── Incoming user message ────────────────────────── */
 
-        socket.on("user message", ({ msg, socketId, clientId }) => {
+        socket.on("user message", ({ msg, socketId, clientId, email, name }) => {
             playChime();
 
             const key = clientId || socketId;  // always prefer persistent clientId
 
             if (!conversations.has(key)) {
-                conversations.set(key, { messages: [], unread: 0, socketId });
+                conversations.set(key, { messages: [], unread: 0, socketId, email: email || '', name: name || '' });
             }
             const convo = conversations.get(key);
             convo.socketId = socketId;   // refresh live socketId on every message
+            if (email && !convo.email) convo.email = email;
+            if (name  && !convo.name)  convo.name  = name;
             convo.messages.push({ from: "user", msg, time: new Date() });
 
             if (selectedUser !== key) {
@@ -640,18 +642,22 @@
         });
 
         // Returning user — load their full DB history into admin view
-        socket.on("user rejoined", ({ clientId, socketId, messages }) => {
+        socket.on("user rejoined", ({ clientId, socketId, messages, email, name }) => {
             if (!clientId) return;
 
             if (!conversations.has(clientId)) {
                 conversations.set(clientId, {
                     messages: messages.map(m => ({ from: m.sender, msg: m.text, time: new Date(m.timestamp) })),
                     unread:   0,
-                    socketId
+                    socketId,
+                    email: email || '',
+                    name:  name  || ''
                 });
             } else {
-                // User already known — just update their live socketId
-                conversations.get(clientId).socketId = socketId;
+                const convo = conversations.get(clientId);
+                convo.socketId = socketId;
+                if (email && !convo.email) convo.email = email;
+                if (name  && !convo.name)  convo.name  = name;
             }
 
             renderSidebar();
@@ -665,9 +671,10 @@
             const convo = conversations.get(clientId);
             convo.unread = 0;
 
-            // Header — show shortened clientId
+            // Header — prefer name/email over raw clientId
+            const displayName = convo.name || convo.email || `…${clientId.slice(-10)}`;
             document.getElementById("panelHeader").innerHTML =
-                `Replying to <strong title="${clientId}">…${clientId.slice(-10)}</strong>`;
+                `Replying to <strong title="${clientId}">${escapeHtml(displayName)}</strong>`;
 
             // Enable input
             document.getElementById("adminInput").disabled = false;
@@ -728,9 +735,11 @@
                 const badgeHtml = convo.unread > 0
                     ? `<span class="unread-badge">${convo.unread}</span>` : "";
 
+                const displayLabel = convo.name || convo.email || `…${clientId.slice(-10)}`;
+                const subLabel     = (convo.name && convo.email) ? convo.email : '';
                 item.innerHTML = `
-                    <div class="user-id">…${clientId.slice(-10)}${badgeHtml}</div>
-                    <div class="user-preview">${last ? escapeHtml(last.msg) : ""}</div>`;
+                    <div class="user-id">${escapeHtml(displayLabel)}${badgeHtml}</div>
+                    <div class="user-preview">${subLabel ? escapeHtml(subLabel) + ' · ' : ''}${last ? escapeHtml(last.msg) : ""}</div>`;
 
                 list.appendChild(item);
             });
@@ -811,12 +820,13 @@
                 }
                 const rows = data.map(u => `
                     <tr>
-                        <td>…${u.clientId.slice(-14)}</td>
+                        <td>${escapeHtml(u.email || u.clientId)}</td>
+                        <td>${escapeHtml(u.name || '—')}</td>
                         <td>${new Date(u.joinedAt).toLocaleString()}</td>
                     </tr>`).join('');
                 renderDetails(`
                     <table class="details-table">
-                        <thead><tr><th>Client ID</th><th>Joined At</th></tr></thead>
+                        <thead><tr><th>Email</th><th>Name</th><th>Joined At</th></tr></thead>
                         <tbody>${rows}</tbody>
                     </table>`, 'Users', 'cardUsers');
             } catch (_) {}
@@ -832,13 +842,14 @@
                 }
                 const rows = data.map(c => `
                     <tr>
-                        <td>…${c.clientId.slice(-14)}</td>
+                        <td>${escapeHtml(c.email || c.clientId)}</td>
+                        <td>${escapeHtml(c.name || '—')}</td>
                         <td>${c.messageCount}</td>
                         <td>${new Date(c.lastActivity).toLocaleString()}</td>
                     </tr>`).join('');
                 renderDetails(`
                     <table class="details-table">
-                        <thead><tr><th>Client ID</th><th>Messages</th><th>Last Active</th></tr></thead>
+                        <thead><tr><th>Email</th><th>Name</th><th>Messages</th><th>Last Active</th></tr></thead>
                         <tbody>${rows}</tbody>
                     </table>`, 'Chats', 'cardChats');
             } catch (_) {}
@@ -854,14 +865,14 @@
                 }
                 const rows = data.map(m => `
                     <tr>
-                        <td>…${m.clientId.slice(-14)}</td>
+                        <td>${escapeHtml(m.email || m.clientId)}</td>
                         <td><span class="sender-badge ${m.sender}">${m.sender}</span></td>
                         <td>${escapeHtml(m.text)}</td>
                         <td>${new Date(m.timestamp).toLocaleTimeString()}</td>
                     </tr>`).join('');
                 renderDetails(`
                     <table class="details-table">
-                        <thead><tr><th>Client ID</th><th>Sender</th><th>Message</th><th>Time</th></tr></thead>
+                        <thead><tr><th>Email</th><th>Sender</th><th>Message</th><th>Time</th></tr></thead>
                         <tbody>${rows}</tbody>
                     </table>`, 'Messages Today', 'cardToday');
             } catch (_) {}

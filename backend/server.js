@@ -182,6 +182,7 @@ const transporter = nodemailer.createTransport({
 
 const admins         = new Set();  // admin socket IDs
 const socketToClient = new Map();  // socket.id → clientId
+const clientToInfo   = new Map();  // clientId → { email, name }
 
 const WELCOME = "Hi 👋 Welcome to ZyanLabs! How can we help you today?";
 
@@ -202,16 +203,19 @@ io.on('connection', (socket) => {
                     messages: [{ sender: 'admin', text: WELCOME }]
                 });
                 await chat.save();
+                clientToInfo.set(clientId, { email: chat.email, name: chat.name });
                 socket.emit('chat history', { messages: chat.messages });
             } else {
                 // Update email / name if not already stored
                 if (!chat.email && email) chat.email = email;
                 if (!chat.name  && name)  chat.name  = name;
                 await chat.save();
+                clientToInfo.set(clientId, { email: chat.email, name: chat.name });
                 socket.emit('chat history', { messages: chat.messages });
                 admins.forEach(adminId => {
                     io.to(adminId).emit('user rejoined', {
-                        clientId, socketId: socket.id, messages: chat.messages
+                        clientId, socketId: socket.id, messages: chat.messages,
+                        email: chat.email || '', name: chat.name || ''
                     });
                 });
             }
@@ -239,9 +243,11 @@ io.on('connection', (socket) => {
             console.log("updateOne result:", JSON.stringify(result));
             console.log("Writing to DB:", mongoose.connection.name);
         } catch (err) { console.error("Chat save error:", err); }
+        const info = clientToInfo.get(clientId) || {};
         admins.forEach(adminId => {
             io.to(adminId).emit('user message', {
-                msg: data.msg.trim(), socketId: socket.id, clientId
+                msg: data.msg.trim(), socketId: socket.id, clientId,
+                email: info.email || '', name: info.name || ''
             });
         });
     });
@@ -274,8 +280,13 @@ io.on('connection', (socket) => {
 // GET /api/users — list of all unique users with their first-seen date
 app.get('/api/users', requireSession, async (req, res) => {
     try {
-        const users = await Chat.find({}, 'clientId createdAt').sort({ createdAt: -1 }).lean();
-        res.json(users.map(u => ({ clientId: u.clientId, joinedAt: u.createdAt })));
+        const users = await Chat.find({}, 'clientId email name createdAt').sort({ createdAt: -1 }).lean();
+        res.json(users.map(u => ({
+            clientId: u.clientId,
+            email:    u.email || '',
+            name:     u.name  || '',
+            joinedAt: u.createdAt
+        })));
     } catch (err) {
         console.error('[api/users error]', err.message);
         res.status(500).json({ error: 'Failed to load users.' });
@@ -285,9 +296,11 @@ app.get('/api/users', requireSession, async (req, res) => {
 // GET /api/chats — all chat sessions with message count and last activity
 app.get('/api/chats', requireSession, async (req, res) => {
     try {
-        const chats = await Chat.find({}, 'clientId messages updatedAt').sort({ updatedAt: -1 }).lean();
+        const chats = await Chat.find({}, 'clientId email name messages updatedAt').sort({ updatedAt: -1 }).lean();
         res.json(chats.map(c => ({
             clientId:     c.clientId,
+            email:        c.email || '',
+            name:         c.name  || '',
             messageCount: c.messages.length,
             lastActivity: c.updatedAt
         })));
@@ -308,6 +321,8 @@ app.get('/api/messages-today', requireSession, async (req, res) => {
             { $project: {
                 _id:       0,
                 clientId:  1,
+                email:     1,
+                name:      1,
                 sender:    '$messages.sender',
                 text:      '$messages.text',
                 timestamp: '$messages.timestamp'
