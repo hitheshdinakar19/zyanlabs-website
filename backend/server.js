@@ -49,8 +49,16 @@ mongoose
         console.log('  MongoDB connected');
         console.log('  DB name:', mongoose.connection.name);
         console.log('  DB host:', mongoose.connection.host);
+
+        server.listen(PORT, () => {
+            console.log(`\n  ZyanLabs server running → http://localhost:${PORT}`);
+            console.log(`  Admin login          → http://localhost:${PORT}/login.html\n`);
+        });
     })
-    .catch(err => console.error('[mongo error]', err.message));
+    .catch(err => {
+        console.error('[mongo error]', err.message);
+        process.exit(1);
+    });
 
 /* ─────────────────────────────
    MIDDLEWARE
@@ -336,11 +344,3 @@ function escapeHtml(str) {
         .replace(/'/g,  '&#039;');
 }
 
-/* ─────────────────────────────
-   START
-───────────────────────────── */
-
-server.listen(PORT, () => {
-    console.log(`\n  ZyanLabs server running → http://localhost:${PORT}`);
-    console.log(`  Admin login          → http://localhost:${PORT}/login.html\n`);
-});
