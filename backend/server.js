@@ -36,6 +36,11 @@ const ADMIN_HASH  =  bcrypt.hashSync(
    MONGODB CONNECTION
 ───────────────────────────── */
 
+if (!process.env.MONGO_URI) {
+    console.error("MONGO_URI missing");
+    process.exit(1);
+}
+
 console.log("Using Mongo URI:", process.env.MONGO_URI);
 
 mongoose
