@@ -351,7 +351,8 @@ nav a:hover {
 
 .services-container {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    justify-content: center;
     align-items: stretch;
     gap: 28px;
     max-width: 1100px;
@@ -756,6 +757,8 @@ textarea {
 .services-container .fade-in:nth-child(1) { transition-delay: 0.08s; }
 .services-container .fade-in:nth-child(2) { transition-delay: 0.16s; }
 .services-container .fade-in:nth-child(3) { transition-delay: 0.24s; }
+.services-container .fade-in:nth-child(4) { transition-delay: 0.32s; }
+.services-container .fade-in:nth-child(5) { transition-delay: 0.40s; }
 .about-left.fade-in                       { transition-delay: 0s; }
 .about-right.fade-in                      { transition-delay: 0.1s; }
 #contact h2.fade-in                       { transition-delay: 0s; }
