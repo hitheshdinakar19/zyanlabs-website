@@ -103,8 +103,13 @@ app.post('/api/login', async (req, res) => {
         return res.status(400).json({ success: false, error: 'Email and password are required.' });
     }
 
+    console.log("Email entered:", email);
+    console.log("User from DB:", null); // no DB lookup — admin credentials are hardcoded
+    console.log("Stored hash:", ADMIN_HASH);
+
     const emailMatch    = email.toLowerCase().trim() === ADMIN_EMAIL;
     const passwordMatch = emailMatch && await bcrypt.compare(password, ADMIN_HASH);
+    console.log("Password match:", passwordMatch);
 
     if (!emailMatch || !passwordMatch) {
         return res.status(401).json({ success: false, error: 'Invalid credentials.' });
