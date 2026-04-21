@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Mobile Game Development — ZyanLabs</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="ZyanLabs builds high-performance mobile games for Android and iOS — focused on user retention, monetization, and scalability.">
+    <meta name="keywords" content="mobile game development, android game development, ios game development, unity game development, monetization strategies">
+
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap"
+          rel="stylesheet">
+</head>
+
+<body>
+
+    <div id="tsparticles"></div>
+
+    <!-- HEADER -->
+    <header>
+        <a href="index.html" class="logo">ZyanLabs</a>
+        <nav>
+            <a href="index.html#about">About</a>
+            <a href="services.html">Services</a>
+            <a href="blog.html">Blog</a>
+            <a href="index.html#contact">Contact</a>
+        </nav>
+        <button class="hamburger" id="navToggle" aria-label="Toggle menu" aria-expanded="false">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+    </header>
+
+    <!-- HERO -->
+    <div class="svc-hero fade-in">
+        <span class="svc-hero-tag">Game Development</span>
+        <h1>Mobile Game Development for <span class="gradient-text">Android &amp; iOS</span></h1>
+        <p>We design and develop high-performance, engaging mobile games focused on user retention, monetization, and scalability.</p>
+        <a href="index.html#contact" class="btn">Start Your Game Project</a>
+    </div>
+
+    <!-- DEMO -->
+    <div class="svc-demo fade-in">
+        <p class="svc-demo-label">Live Preview — Example Game UI</p>
+        <div class="demo-browser">
+            <div class="demo-bar">
+                <div class="demo-dot red"></div>
+                <div class="demo-dot yel"></div>
+                <div class="demo-dot grn"></div>
+                <div class="demo-url">gamezone.app</div>
+            </div>
+            <div class="de-wrap" style="padding: 0;">
+                <!-- Game header bar -->
+                <div style="display:flex; justify-content:space-between; align-items:center;
+                            padding: 14px 20px; background: rgba(124,92,255,0.12);
+                            border-bottom: 1px solid rgba(255,255,255,0.07);">
+                    <div style="font-size:13px; font-weight:700; color:white; letter-spacing:1px;">NOVA RUNNER</div>
+                    <div style="display:flex; gap:20px; font-size:12px; color:rgba(255,255,255,0.6);">
+                        <span>⭐ Level 7</span>
+                        <span>🏆 Score: 4,820</span>
+                        <span>❤️ ❤️ ❤️</span>
+                    </div>
+                </div>
+                <!-- Game arena -->
+                <div style="background: linear-gradient(180deg, #0a0f1e 0%, #0d1b35 100%);
+                            padding: 28px 20px; text-align:center; position:relative; min-height:160px;">
+                    <div style="font-size:11px; color:rgba(255,255,255,0.25); letter-spacing:2px;
+                                text-transform:uppercase; margin-bottom:16px;">Stage 3 — Desert Run</div>
+                    <div style="display:flex; justify-content:center; align-items:flex-end;
+                                gap:12px; font-size:32px; margin-bottom:8px;">
+                        <span style="opacity:0.3;">🌵</span>
+                        <span>🧑‍🚀</span>
+                        <span style="opacity:0.5;">🪨</span>
+                        <span style="opacity:0.2;">⚡</span>
+                    </div>
+                    <div style="height:2px; background:rgba(124,92,255,0.4); border-radius:2px;
+                                margin: 0 auto; max-width:320px;"></div>
+                    <!-- XP bar -->
+                    <div style="margin-top:16px; background:rgba(255,255,255,0.06);
+                                border-radius:6px; height:6px; max-width:280px; margin-left:auto; margin-right:auto;">
+                        <div style="width:68%; height:100%; background:linear-gradient(90deg,#3b82f6,#7c5cff);
+                                    border-radius:6px;"></div>
+                    </div>
+                    <div style="font-size:10px; color:rgba(255,255,255,0.3); margin-top:6px;">XP 68% — Next Level</div>
+                </div>
+                <!-- Game action buttons -->
+                <div style="display:flex; gap:12px; padding:16px 20px;
+                            background:rgba(255,255,255,0.02); border-top:1px solid rgba(255,255,255,0.06);">
+                    <div style="flex:1; padding:10px; border-radius:8px; text-align:center; font-size:12px;
+                                font-weight:600; background:linear-gradient(90deg,#3b82f6,#7c5cff); color:white;
+                                cursor:pointer;">▶ Play</div>
+                    <div style="flex:1; padding:10px; border-radius:8px; text-align:center; font-size:12px;
+                                font-weight:600; background:rgba(255,255,255,0.06);
+                                border:1px solid rgba(255,255,255,0.1); color:rgba(255,255,255,0.7);
+                                cursor:pointer;">🏪 Store</div>
+                    <div style="flex:1; padding:10px; border-radius:8px; text-align:center; font-size:12px;
+                                font-weight:600; background:rgba(255,255,255,0.06);
+                                border:1px solid rgba(255,255,255,0.1); color:rgba(255,255,255,0.7);
+                                cursor:pointer;">🏆 Ranks</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FEATURES -->
+    <div class="svc-features fade-in">
+        <h2 class="svc-section-title">What We Build</h2>
+        <p class="svc-section-sub">End-to-end mobile game development for Android and iOS — from concept to launch.</p>
+        <div class="features-grid">
+            <div class="feature-item">
+                <div class="feature-num">01</div>
+                <h3>Cross-Platform Development</h3>
+                <p>We build once and deploy everywhere — Android and iOS — using modern frameworks to cut development time without sacrificing quality or performance.</p>
+            </div>
+            <div class="feature-item">
+                <div class="feature-num">02</div>
+                <h3>Monetization Systems</h3>
+                <p>In-app purchases, rewarded ads, battle passes, and subscription models designed to maximise revenue while keeping players engaged and happy.</p>
+            </div>
+            <div class="feature-item">
+                <div class="feature-num">03</div>
+                <h3>Performance Optimization</h3>
+                <p>Smooth 60fps gameplay, low latency, minimal battery drain, and a scalable backend that handles millions of concurrent users without breaking a sweat.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- PROCESS -->
+    <div class="svc-process fade-in">
+        <h2 class="svc-section-title">How We Build It</h2>
+        <p class="svc-section-sub">From concept to the App Store — a proven process that delivers.</p>
+        <div class="process-track">
+            <div class="process-step">
+                <div class="process-num">1</div>
+                <h3>Game Design &amp; Concept</h3>
+                <p>We define the game loop, mechanics, art direction, target audience, and monetization strategy before a single line of code is written.</p>
+            </div>
+            <div class="process-step">
+                <div class="process-num">2</div>
+                <h3>Development &amp; Testing</h3>
+                <p>We build the game iteratively — testing on real Android and iOS devices at every stage to ensure smooth gameplay and zero critical bugs at launch.</p>
+            </div>
+            <div class="process-step">
+                <div class="process-num">3</div>
+                <h3>Launch &amp; Monetize</h3>
+                <p>We handle App Store and Google Play submission, set up your analytics, and configure monetization so you start earning from day one.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- WHY US -->
+    <div class="svc-features fade-in" style="padding-top: 0;">
+        <h2 class="svc-section-title">Why ZyanLabs</h2>
+        <p class="svc-section-sub" style="max-width:680px; margin: 0 auto;">
+            We combine creativity with engineering to build games that users love and businesses profit from.
+            From casual mobile games to mid-scale multiplayer experiences, we deliver performance-driven
+            solutions built around unity game development best practices and proven monetization strategies.
+            Every game we build is optimised for retention — because a game players keep coming back to is
+            a game that keeps earning.
+        </p>
+    </div>
+
+    <!-- CTA -->
+    <div class="svc-cta fade-in">
+        <h2>Build Your Game <span class="gradient-text">With Us</span></h2>
+        <p>Ready to build a mobile game that users love and keeps them coming back? Let's talk — proposal within 48 hours.</p>
+        <a href="index.html#contact" class="btn">Start Project</a>
+    </div>
+
+    <!-- SITE FOOTER -->
+    <footer class="site-footer">
+        <div class="footer-inner">
+            <div class="footer-brand">
+                <a href="index.html" class="logo">ZyanLabs</a>
+                <p>We build the systems that turn your business into a growth engine — websites, automation, and CRO that actually move the needle.</p>
+            </div>
+            <div class="footer-col">
+                <h4>Company</h4>
+                <ul>
+                    <li><a href="index.html#systems">Systems</a></li>
+                    <li><a href="services.html">Services</a></li>
+                    <li><a href="index.html#about">About</a></li>
+                    <li><a href="blog.html">Blog</a></li>
+                    <li><a href="index.html#contact">Contact</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Legal</h4>
+                <ul>
+                    <li><a href="privacy.html">Privacy Policy</a></li>
+                    <li><a href="terms.html">Terms &amp; Conditions</a></li>
+                    <li><a href="refund.html">Refund Policy</a></li>
+                    <li><a href="disclaimer.html">Disclaimer</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 ZyanLabs. All rights reserved.</p>
+            <div class="footer-legal-links">
+                <a href="privacy.html">Privacy</a>
+                <a href="terms.html">Terms</a>
+                <a href="refund.html">Refund</a>
+                <a href="disclaimer.html">Disclaimer</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/tsparticles@2/tsparticles.bundle.min.js"></script>
+    <script src="script.js"></script>
+    <script src="nav.js"></script>
+</body>
+</html>

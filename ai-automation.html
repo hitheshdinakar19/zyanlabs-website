@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>AI Automation & Intelligent Software — ZyanLabs</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="ZyanLabs builds AI automation systems, AI agents, and intelligent software integrations that reduce manual work and scale your business.">
+    <meta name="keywords" content="AI automation, AI agents, business automation, SaaS AI integration, workflow automation">
+
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap"
+          rel="stylesheet">
+</head>
+
+<body>
+
+    <div id="tsparticles"></div>
+
+    <!-- HEADER -->
+    <header>
+        <a href="index.html" class="logo">ZyanLabs</a>
+        <nav>
+            <a href="index.html#about">About</a>
+            <a href="services.html">Services</a>
+            <a href="blog.html">Blog</a>
+            <a href="index.html#contact">Contact</a>
+        </nav>
+        <button class="hamburger" id="navToggle" aria-label="Toggle menu" aria-expanded="false">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+    </header>
+
+    <!-- HERO -->
+    <div class="svc-hero fade-in">
+        <span class="svc-hero-tag">AI Automation</span>
+        <h1>AI Automation &amp; <span class="gradient-text">Intelligent Software</span></h1>
+        <p>Automate workflows, enhance user experience, and integrate AI agents into your business systems — reducing manual work while scaling your operations.</p>
+        <a href="index.html#contact" class="btn">Automate Your Business</a>
+    </div>
+
+    <!-- DEMO -->
+    <div class="svc-demo fade-in">
+        <p class="svc-demo-label">Live Preview — AI Assistant Panel</p>
+        <div class="demo-browser">
+            <div class="demo-bar">
+                <div class="demo-dot red"></div>
+                <div class="demo-dot yel"></div>
+                <div class="demo-dot grn"></div>
+                <div class="demo-url">ai.zyanlabs.com</div>
+            </div>
+            <div class="de-wrap" style="padding: 0;">
+                <!-- AI chat header -->
+                <div style="display:flex; justify-content:space-between; align-items:center;
+                            padding: 14px 20px; background: rgba(59,130,246,0.1);
+                            border-bottom: 1px solid rgba(255,255,255,0.07);">
+                    <div style="display:flex; align-items:center; gap:10px;">
+                        <div style="width:28px; height:28px; border-radius:50%;
+                                    background:linear-gradient(135deg,#3b82f6,#7c5cff);
+                                    display:flex; align-items:center; justify-content:center;
+                                    font-size:14px;">🤖</div>
+                        <div>
+                            <div style="font-size:13px; font-weight:700; color:white;">Zyan AI Assistant</div>
+                            <div style="font-size:10px; color:#22c55e;">● Online</div>
+                        </div>
+                    </div>
+                    <div style="font-size:11px; color:rgba(255,255,255,0.35); background:rgba(255,255,255,0.05);
+                                padding:4px 10px; border-radius:20px; border:1px solid rgba(255,255,255,0.08);">
+                        Powered by AI
+                    </div>
+                </div>
+                <!-- Chat messages -->
+                <div style="padding:16px 20px; display:flex; flex-direction:column; gap:12px; min-height:160px;">
+                    <div style="display:flex; align-items:flex-start; gap:10px;">
+                        <div style="width:24px; height:24px; border-radius:50%; flex-shrink:0;
+                                    background:linear-gradient(135deg,#3b82f6,#7c5cff);
+                                    display:flex; align-items:center; justify-content:center;
+                                    font-size:11px;">🤖</div>
+                        <div style="background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.07);
+                                    border-radius:12px; border-bottom-left-radius:3px;
+                                    padding:9px 13px; font-size:13px; color:rgba(255,255,255,0.85);
+                                    max-width:75%;">
+                            How can I help you today? 👋
+                        </div>
+                    </div>
+                    <div style="display:flex; justify-content:flex-end;">
+                        <div style="background:linear-gradient(90deg,#3b82f6,#7c5cff);
+                                    border-radius:12px; border-bottom-right-radius:3px;
+                                    padding:9px 13px; font-size:13px; color:white; max-width:75%;">
+                            Generate a sales report for Q1 2025
+                        </div>
+                    </div>
+                    <div style="display:flex; align-items:flex-start; gap:10px;">
+                        <div style="width:24px; height:24px; border-radius:50%; flex-shrink:0;
+                                    background:linear-gradient(135deg,#3b82f6,#7c5cff);
+                                    display:flex; align-items:center; justify-content:center;
+                                    font-size:11px;">🤖</div>
+                        <div style="background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.07);
+                                    border-radius:12px; border-bottom-left-radius:3px;
+                                    padding:9px 13px; font-size:13px; color:rgba(255,255,255,0.85);
+                                    max-width:75%;">
+                            <span style="opacity:0.5; font-size:11px;">⚙ Generating report…</span><br>
+                            Q1 revenue: <strong style="color:#5aa9ff;">₹12.4L</strong> · Growth: <strong style="color:#22c55e;">+34%</strong>
+                        </div>
+                    </div>
+                </div>
+                <!-- Input bar -->
+                <div style="display:flex; gap:8px; padding:12px 16px;
+                            border-top:1px solid rgba(255,255,255,0.07);
+                            background:rgba(255,255,255,0.02);">
+                    <div style="flex:1; padding:9px 12px; border-radius:8px; font-size:13px;
+                                background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1);
+                                color:rgba(255,255,255,0.35);">Ask anything…</div>
+                    <div style="padding:9px 16px; border-radius:8px; font-size:13px; font-weight:600;
+                                background:linear-gradient(90deg,#3b82f6,#9333ea); color:white;
+                                cursor:pointer;">Send</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FEATURES -->
+    <div class="svc-features fade-in">
+        <h2 class="svc-section-title">What We Build</h2>
+        <p class="svc-section-sub">Intelligent systems that reduce manual work, improve decisions, and scale with your business.</p>
+        <div class="features-grid">
+            <div class="feature-item">
+                <div class="feature-num">01</div>
+                <h3>AI Chat Assistants</h3>
+                <p>Deploy AI agents inside your software or website that answer user queries, qualify leads, and handle support — 24/7, at scale, without additional headcount.</p>
+            </div>
+            <div class="feature-item">
+                <div class="feature-num">02</div>
+                <h3>Workflow Automation</h3>
+                <p>Identify repetitive manual processes — reports, approvals, data entry, notifications — and replace them with intelligent automated workflows that run on their own.</p>
+            </div>
+            <div class="feature-item">
+                <div class="feature-num">03</div>
+                <h3>SaaS AI Integration</h3>
+                <p>Embed AI capabilities directly into your dashboards, CRMs, and internal tools — turning static software into intelligent systems that actively help your team.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- PROCESS -->
+    <div class="svc-process fade-in">
+        <h2 class="svc-section-title">How We Build It</h2>
+        <p class="svc-section-sub">From identifying the right workflows to deploying production-grade AI systems.</p>
+        <div class="process-track">
+            <div class="process-step">
+                <div class="process-num">1</div>
+                <h3>Identify Workflows</h3>
+                <p>We audit your operations to find the highest-impact automation opportunities — the tasks that consume the most time and deliver the least strategic value.</p>
+            </div>
+            <div class="process-step">
+                <div class="process-num">2</div>
+                <h3>Build &amp; Integrate</h3>
+                <p>We engineer the AI system, connect it to your existing tools and data sources, and test it rigorously before deploying it to your production environment.</p>
+            </div>
+            <div class="process-step">
+                <div class="process-num">3</div>
+                <h3>Monitor &amp; Optimize</h3>
+                <p>We track performance, gather feedback, and continuously improve the system — so your AI gets smarter and more effective the longer it runs.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- WHY US -->
+    <div class="svc-features fade-in" style="padding-top: 0;">
+        <h2 class="svc-section-title">Why ZyanLabs</h2>
+        <p class="svc-section-sub" style="max-width:680px; margin: 0 auto;">
+            Our AI solutions are designed to reduce manual work, improve efficiency, and enhance user satisfaction.
+            From AI-powered support systems to internal automation tools, we build scalable intelligent systems
+            that integrate cleanly with your existing stack. We don't bolt AI on as a feature — we design it
+            as a core part of your business workflow so it creates real, measurable impact from day one.
+        </p>
+    </div>
+
+    <!-- CTA -->
+    <div class="svc-cta fade-in">
+        <h2>Integrate AI Into <span class="gradient-text">Your Business</span></h2>
+        <p>From workflow automation to full AI agent deployment — let's build the system that works for you. Proposal within 48 hours.</p>
+        <a href="index.html#contact" class="btn">Get Started</a>
+    </div>
+
+    <!-- SITE FOOTER -->
+    <footer class="site-footer">
+        <div class="footer-inner">
+            <div class="footer-brand">
+                <a href="index.html" class="logo">ZyanLabs</a>
+                <p>We build the systems that turn your business into a growth engine — websites, automation, and CRO that actually move the needle.</p>
+            </div>
+            <div class="footer-col">
+                <h4>Company</h4>
+                <ul>
+                    <li><a href="index.html#systems">Systems</a></li>
+                    <li><a href="services.html">Services</a></li>
+                    <li><a href="index.html#about">About</a></li>
+                    <li><a href="blog.html">Blog</a></li>
+                    <li><a href="index.html#contact">Contact</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Legal</h4>
+                <ul>
+                    <li><a href="privacy.html">Privacy Policy</a></li>
+                    <li><a href="terms.html">Terms &amp; Conditions</a></li>
+                    <li><a href="refund.html">Refund Policy</a></li>
+                    <li><a href="disclaimer.html">Disclaimer</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 ZyanLabs. All rights reserved.</p>
+            <div class="footer-legal-links">
+                <a href="privacy.html">Privacy</a>
+                <a href="terms.html">Terms</a>
+                <a href="refund.html">Refund</a>
+                <a href="disclaimer.html">Disclaimer</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/tsparticles@2/tsparticles.bundle.min.js"></script>
+    <script src="script.js"></script>
+    <script src="nav.js"></script>
+</body>
+</html>
