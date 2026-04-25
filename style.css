@@ -2109,7 +2109,12 @@ nav a:hover::after {
 .features-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
+    gap: 24px;
+    align-items: stretch;
+}
+
+.features-grid--2col {
+    grid-template-columns: repeat(2, 1fr);
 }
 
 .feature-item {
@@ -2235,6 +2240,7 @@ nav a:hover::after {
 
 @media (max-width: 1024px) {
     .features-grid { grid-template-columns: repeat(2, 1fr); }
+    .features-grid--2col { grid-template-columns: repeat(2, 1fr); }
 }
 
 
@@ -2897,6 +2903,7 @@ nav a:hover::after {
     .svc-hero h1 { font-size: clamp(26px, 8vw, 44px); }
     .svc-demo { padding-left: 16px; padding-right: 16px; }
     .features-grid { grid-template-columns: 1fr; }
+    .features-grid--2col { grid-template-columns: 1fr; }
     .process-track { grid-template-columns: 1fr; gap: 32px; }
     .process-track::before { display: none; }
     .svc-cta h2 { font-size: 28px; }
